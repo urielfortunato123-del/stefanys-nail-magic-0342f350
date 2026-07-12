@@ -23,7 +23,7 @@ export function BottomNav() {
           return (
             <li key={to} className="flex">
               <Link
-                to={to}
+                to={to as never}
                 aria-label={label}
                 className={`flex flex-1 flex-col items-center justify-center gap-1 py-2 text-[10px] transition ${
                   active ? "text-[color:var(--pink)]" : "text-white/60"
