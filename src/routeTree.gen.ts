@@ -9,9 +9,46 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SobreRouteImport } from './routes/sobre'
+import { Route as ServicosRouteImport } from './routes/servicos'
+import { Route as InstalarRouteImport } from './routes/instalar'
+import { Route as InspiracoesRouteImport } from './routes/inspiracoes'
+import { Route as ContatoRouteImport } from './routes/contato'
+import { Route as AreaAtendidaRouteImport } from './routes/area-atendida'
 import { Route as AgendarRouteImport } from './routes/agendar'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AgendarSucessoRouteImport } from './routes/agendar.sucesso'
 
+const SobreRoute = SobreRouteImport.update({
+  id: '/sobre',
+  path: '/sobre',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ServicosRoute = ServicosRouteImport.update({
+  id: '/servicos',
+  path: '/servicos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const InstalarRoute = InstalarRouteImport.update({
+  id: '/instalar',
+  path: '/instalar',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const InspiracoesRoute = InspiracoesRouteImport.update({
+  id: '/inspiracoes',
+  path: '/inspiracoes',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContatoRoute = ContatoRouteImport.update({
+  id: '/contato',
+  path: '/contato',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AreaAtendidaRoute = AreaAtendidaRouteImport.update({
+  id: '/area-atendida',
+  path: '/area-atendida',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AgendarRoute = AgendarRouteImport.update({
   id: '/agendar',
   path: '/agendar',
@@ -22,35 +59,137 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AgendarSucessoRoute = AgendarSucessoRouteImport.update({
+  id: '/sucesso',
+  path: '/sucesso',
+  getParentRoute: () => AgendarRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/agendar': typeof AgendarRoute
+  '/agendar': typeof AgendarRouteWithChildren
+  '/area-atendida': typeof AreaAtendidaRoute
+  '/contato': typeof ContatoRoute
+  '/inspiracoes': typeof InspiracoesRoute
+  '/instalar': typeof InstalarRoute
+  '/servicos': typeof ServicosRoute
+  '/sobre': typeof SobreRoute
+  '/agendar/sucesso': typeof AgendarSucessoRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/agendar': typeof AgendarRoute
+  '/agendar': typeof AgendarRouteWithChildren
+  '/area-atendida': typeof AreaAtendidaRoute
+  '/contato': typeof ContatoRoute
+  '/inspiracoes': typeof InspiracoesRoute
+  '/instalar': typeof InstalarRoute
+  '/servicos': typeof ServicosRoute
+  '/sobre': typeof SobreRoute
+  '/agendar/sucesso': typeof AgendarSucessoRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/agendar': typeof AgendarRoute
+  '/agendar': typeof AgendarRouteWithChildren
+  '/area-atendida': typeof AreaAtendidaRoute
+  '/contato': typeof ContatoRoute
+  '/inspiracoes': typeof InspiracoesRoute
+  '/instalar': typeof InstalarRoute
+  '/servicos': typeof ServicosRoute
+  '/sobre': typeof SobreRoute
+  '/agendar/sucesso': typeof AgendarSucessoRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/agendar'
+  fullPaths:
+    | '/'
+    | '/agendar'
+    | '/area-atendida'
+    | '/contato'
+    | '/inspiracoes'
+    | '/instalar'
+    | '/servicos'
+    | '/sobre'
+    | '/agendar/sucesso'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/agendar'
-  id: '__root__' | '/' | '/agendar'
+  to:
+    | '/'
+    | '/agendar'
+    | '/area-atendida'
+    | '/contato'
+    | '/inspiracoes'
+    | '/instalar'
+    | '/servicos'
+    | '/sobre'
+    | '/agendar/sucesso'
+  id:
+    | '__root__'
+    | '/'
+    | '/agendar'
+    | '/area-atendida'
+    | '/contato'
+    | '/inspiracoes'
+    | '/instalar'
+    | '/servicos'
+    | '/sobre'
+    | '/agendar/sucesso'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AgendarRoute: typeof AgendarRoute
+  AgendarRoute: typeof AgendarRouteWithChildren
+  AreaAtendidaRoute: typeof AreaAtendidaRoute
+  ContatoRoute: typeof ContatoRoute
+  InspiracoesRoute: typeof InspiracoesRoute
+  InstalarRoute: typeof InstalarRoute
+  ServicosRoute: typeof ServicosRoute
+  SobreRoute: typeof SobreRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/sobre': {
+      id: '/sobre'
+      path: '/sobre'
+      fullPath: '/sobre'
+      preLoaderRoute: typeof SobreRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/servicos': {
+      id: '/servicos'
+      path: '/servicos'
+      fullPath: '/servicos'
+      preLoaderRoute: typeof ServicosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/instalar': {
+      id: '/instalar'
+      path: '/instalar'
+      fullPath: '/instalar'
+      preLoaderRoute: typeof InstalarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/inspiracoes': {
+      id: '/inspiracoes'
+      path: '/inspiracoes'
+      fullPath: '/inspiracoes'
+      preLoaderRoute: typeof InspiracoesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contato': {
+      id: '/contato'
+      path: '/contato'
+      fullPath: '/contato'
+      preLoaderRoute: typeof ContatoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/area-atendida': {
+      id: '/area-atendida'
+      path: '/area-atendida'
+      fullPath: '/area-atendida'
+      preLoaderRoute: typeof AreaAtendidaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/agendar': {
       id: '/agendar'
       path: '/agendar'
@@ -65,12 +204,36 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/agendar/sucesso': {
+      id: '/agendar/sucesso'
+      path: '/sucesso'
+      fullPath: '/agendar/sucesso'
+      preLoaderRoute: typeof AgendarSucessoRouteImport
+      parentRoute: typeof AgendarRoute
+    }
   }
 }
 
+interface AgendarRouteChildren {
+  AgendarSucessoRoute: typeof AgendarSucessoRoute
+}
+
+const AgendarRouteChildren: AgendarRouteChildren = {
+  AgendarSucessoRoute: AgendarSucessoRoute,
+}
+
+const AgendarRouteWithChildren =
+  AgendarRoute._addFileChildren(AgendarRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AgendarRoute: AgendarRoute,
+  AgendarRoute: AgendarRouteWithChildren,
+  AreaAtendidaRoute: AreaAtendidaRoute,
+  ContatoRoute: ContatoRoute,
+  InspiracoesRoute: InspiracoesRoute,
+  InstalarRoute: InstalarRoute,
+  ServicosRoute: ServicosRoute,
+  SobreRoute: SobreRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
