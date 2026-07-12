@@ -84,10 +84,11 @@ function Home() {
             Ver todos <ChevronRight className="h-3 w-3" />
           </Link>
         </div>
-        <div className="-mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-2">
+        <div className="-mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-2 no-scrollbar">
           {gallery.slice(0, 6).map((g) => (
-            <div key={g.id} className="glass-card relative w-40 shrink-0 snap-start overflow-hidden rounded-2xl">
-              <div className="h-40 w-full" style={{ background: `linear-gradient(135deg, ${g.color}, #092747)` }} />
+            <div key={g.id} className="relative w-36 shrink-0 snap-start overflow-hidden rounded-2xl border border-white/10 bg-[#08213D]">
+              <img src={g.imageUrl} alt={g.title} loading="lazy" className="aspect-[4/5] w-full object-cover"
+                onError={(e) => { (e.currentTarget as HTMLImageElement).src = "/images/nails/placeholder.jpg"; }} />
               <div className="p-2.5">
                 <p className="truncate text-xs font-medium text-white">{g.title}</p>
                 <p className="text-[10px] text-white/50">{g.category}</p>

@@ -2,9 +2,9 @@ export interface GalleryItem {
   id: string;
   title: string;
   category: string;
-  tags: string[];
-  // Imagem provisória — troque pelas fotos reais da Stefany
-  color: string;
+  imageUrl: string;
+  colors: string[];
+  featured?: boolean;
 }
 
 export const galleryCategories = [
@@ -16,20 +16,50 @@ export const galleryCategories = [
   "Preto",
   "Glitter",
   "Artísticas",
-  "Alongamento",
-  "Curtas",
-  "Longas",
 ] as const;
 
-// Placeholders — cada card representa uma foto real a ser inserida
 export const gallery: GalleryItem[] = [
-  { id: "g1", title: "Nude delicada", category: "Delicadas", tags: ["Delicadas", "Curtas"], color: "#FFD4DF" },
-  { id: "g2", title: "Francesinha clássica", category: "Francesinha", tags: ["Francesinha", "Delicadas"], color: "#FFFFFF" },
-  { id: "g3", title: "Rosa glitter", category: "Glitter", tags: ["Glitter", "Rosa"], color: "#F7A8BD" },
-  { id: "g4", title: "Preto poderoso", category: "Coloridas", tags: ["Preto", "Longas"], color: "#0b0b0b" },
-  { id: "g5", title: "Arte floral", category: "Artísticas", tags: ["Artísticas", "Alongamento"], color: "#D8BE8B" },
-  { id: "g6", title: "Vermelho intenso", category: "Coloridas", tags: ["Coloridas", "Longas"], color: "#B4213A" },
-  { id: "g7", title: "Nude alongada", category: "Alongamento", tags: ["Alongamento", "Delicadas"], color: "#EBD3C6" },
-  { id: "g8", title: "Francesinha rosa", category: "Francesinha", tags: ["Francesinha", "Rosa"], color: "#FFD4DF" },
-  { id: "g9", title: "Glitter dourado", category: "Glitter", tags: ["Glitter", "Artísticas"], color: "#D8BE8B" },
+  {
+    id: "nude-delicada",
+    title: "Nude delicada",
+    category: "Delicadas",
+    imageUrl: "/images/nails/nail1.png",
+    colors: ["Nude", "Rosa"],
+    featured: true,
+  },
+  {
+    id: "francesinha-classica",
+    title: "Francesinha clássica",
+    category: "Francesinha",
+    imageUrl: "/images/nails/nail2.png",
+    colors: ["Branco", "Nude"],
+  },
+  {
+    id: "rosa-glitter",
+    title: "Rosa glitter",
+    category: "Glitter",
+    imageUrl: "/images/nails/nail3.png",
+    colors: ["Rosa", "Prata"],
+  },
+  {
+    id: "arte-detalhada",
+    title: "Arte detalhada",
+    category: "Artísticas",
+    imageUrl: "/images/nails/nail4.png",
+    colors: ["Nude", "Dourado"],
+  },
+  {
+    id: "rosa-clean",
+    title: "Rosa clean",
+    category: "Rosa",
+    imageUrl: "/images/nails/nail1.png",
+    colors: ["Rosa"],
+  },
+  {
+    id: "francesinha-rosa",
+    title: "Francesinha rosa",
+    category: "Francesinha",
+    imageUrl: "/images/nails/nail2.png",
+    colors: ["Rosa", "Branco"],
+  },
 ];

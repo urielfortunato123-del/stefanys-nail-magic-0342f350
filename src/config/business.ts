@@ -7,10 +7,9 @@ export const businessConfig = {
   slogan: "Beleza até você.",
   subtitle: "Atendimento em domicílio.",
   serviceArea: "Atendimento em domicílio",
-  // 🔁 Troque aqui o WhatsApp oficial (somente números, com DDI+DDD)
   whatsappNumber: "5511972268546",
-  // 🔁 Troque aqui o Instagram
-  instagramUrl: "https://instagram.com/USUARIO",
+  instagramHandle: "stefany_prospero.nails",
+  instagramUrl: "https://instagram.com/stefany_prospero.nails",
   description: "Agendamentos e serviços de nail designer em domicílio.",
 };
 

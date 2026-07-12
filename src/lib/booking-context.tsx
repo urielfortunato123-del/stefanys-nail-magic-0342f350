@@ -29,6 +29,8 @@ export interface BookingState {
   decorations: string[];
   referenceImage?: string; // dataURL
   referenceImageName?: string;
+  referenceModel?: { id: string; title: string; imageUrl: string; category: string };
+
 
   // Data
   date: string;
