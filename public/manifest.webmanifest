@@ -1,17 +1,22 @@
 {
-  "name": "Stefany Nail Designer",
+  "name": "Stefany Próspero — Nail Designer",
   "short_name": "Stefany Nails",
-  "description": "Agendamentos e serviços de nail designer em domicílio.",
+  "description": "Agendamentos de nail designer em domicílio com Stefany Próspero.",
+  "id": "/",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
   "orientation": "portrait",
   "background_color": "#061A33",
   "theme_color": "#061A33",
   "categories": ["lifestyle", "beauty"],
   "lang": "pt-BR",
+  "dir": "ltr",
   "icons": [
-    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
-    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icon-192-maskable.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+    { "src": "/icon-512-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
   ]
 }
