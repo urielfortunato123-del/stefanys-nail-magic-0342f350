@@ -368,12 +368,21 @@ function StepStyle({ data, update }: StepProps) {
 }
 
 const COLORS: { name: string; hex: string }[] = [
-  { name: "Rosa", hex: "#F7A8BD" }, { name: "Nude", hex: "#EBD3C6" }, { name: "Branco", hex: "#FFFFFF" },
-  { name: "Preto", hex: "#111111" }, { name: "Vermelho", hex: "#B4213A" }, { name: "Azul", hex: "#284b8a" },
-  { name: "Roxo", hex: "#6a3ea1" }, { name: "Verde", hex: "#3b8a5a" }, { name: "Dourado", hex: "#D8BE8B" },
-  { name: "Prata", hex: "#C0C0C0" }, { name: "Outra cor", hex: "linear-gradient(45deg,#F7A8BD,#D8BE8B,#284b8a)" },
-  { name: "Ainda não decidi", hex: "transparent" },
+  { name: "Rosa claro", hex: "#F5B6C8" },
+  { name: "Rosa pink", hex: "#E83E8C" },
+  { name: "Nude", hex: "#D8B4A0" },
+  { name: "Branco", hex: "#FFFFFF" },
+  { name: "Preto", hex: "#111111" },
+  { name: "Vermelho", hex: "#B91C3C" },
+  { name: "Azul claro", hex: "#7DD3FC" },
+  { name: "Azul", hex: "#2563EB" },
+  { name: "Roxo", hex: "#8B5CF6" },
+  { name: "Verde", hex: "#22C55E" },
+  { name: "Dourado", hex: "#D4AF37" },
+  { name: "Prata", hex: "#C0C0C0" },
 ];
+
+const EXTRA_COLOR_OPTS = ["Outra cor", "Ainda não decidi"];
 
 function StepColors({ data, update }: StepProps) {
   const toggleColor = (c: string) => {
@@ -397,20 +406,54 @@ function StepColors({ data, update }: StepProps) {
     <div>
       <SectionTitle subtitle="Escolha as cores e detalhes que você quer.">Cor e referência</SectionTitle>
       <div className="space-y-5">
+        {data.referenceModel && (
+          <div className="flex items-center gap-3 rounded-2xl border border-[color:var(--pink)]/30 bg-[color:var(--pink)]/10 p-3">
+            <img src={data.referenceModel.imageUrl} alt={data.referenceModel.title} className="h-14 w-14 rounded-xl object-cover" />
+            <div className="min-w-0 flex-1">
+              <p className="text-[10px] uppercase tracking-widest text-[color:var(--pink)]">Modelo escolhido</p>
+              <p className="truncate text-sm font-semibold text-white">{data.referenceModel.title}</p>
+            </div>
+            <button type="button" onClick={() => update({ referenceModel: undefined })} className="text-xs text-white/60">Remover</button>
+          </div>
+        )}
+
         <div>
-          <p className="mb-2 text-xs font-medium uppercase tracking-wider text-white/50">Cores</p>
-          <div className="grid grid-cols-4 gap-2">
+          <p className="mb-3 text-xs font-medium uppercase tracking-wider text-white/50">Cores (pode escolher mais de uma)</p>
+          <div className="grid grid-cols-6 gap-3">
             {COLORS.map((c) => {
               const on = data.colors.includes(c.name);
+              const lightBg = ["#FFFFFF", "#F5B6C8", "#7DD3FC", "#D8B4A0", "#C0C0C0", "#D4AF37"].includes(c.hex);
               return (
-                <button key={c.name} type="button" onClick={() => toggleColor(c.name)}
-                  className={`flex flex-col items-center gap-1 rounded-2xl border p-2 transition ${on ? "border-[color:var(--pink)] bg-[color:var(--pink)]/10" : "border-white/10 bg-white/[0.02]"}`}>
-                  <span className="h-8 w-8 rounded-full border border-white/20" style={{ background: c.hex }} aria-hidden />
-                  <span className="text-center text-[10px] leading-tight text-white/80">{c.name}</span>
+                <button
+                  key={c.name}
+                  type="button"
+                  aria-label={c.name}
+                  title={c.name}
+                  onClick={() => toggleColor(c.name)}
+                  style={{ backgroundColor: c.hex }}
+                  className={`relative h-11 w-11 rounded-full border-2 transition-transform active:scale-95 ${
+                    on ? "border-[#F7A8BD] ring-2 ring-[#F7A8BD]/40" : "border-white/20"
+                  }`}
+                >
+                  {on && <Check className={`absolute inset-0 m-auto h-5 w-5 ${lightBg ? "text-[#061A33]" : "text-white"}`} />}
                 </button>
               );
             })}
           </div>
+          <div className="mt-3 flex flex-wrap gap-2">
+            {EXTRA_COLOR_OPTS.map((v) => {
+              const on = data.colors.includes(v);
+              return (
+                <button key={v} type="button" onClick={() => toggleColor(v)}
+                  className={`rounded-full border px-3 py-1.5 text-xs font-medium ${on ? "border-[color:var(--pink)] bg-[color:var(--pink)] text-[color:var(--navy)]" : "border-white/15 bg-white/5 text-white/80"}`}>
+                  {v}
+                </button>
+              );
+            })}
+          </div>
+          {data.colors.length > 0 && (
+            <p className="mt-3 text-xs text-white/60">Cores escolhidas: <span className="text-white">{data.colors.join(", ")}</span></p>
+          )}
         </div>
 
         <Field label="Deseja francesinha?">
