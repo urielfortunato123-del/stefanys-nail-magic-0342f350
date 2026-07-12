@@ -1,13 +1,13 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { Home, Sparkles, CalendarHeart, ListChecks, MessageCircle } from "lucide-react";
 
-const items = [
+const items: { to: string; label: string; icon: typeof Home; primary?: boolean }[] = [
   { to: "/", label: "Início", icon: Home },
   { to: "/inspiracoes", label: "Inspirações", icon: Sparkles },
   { to: "/agendar", label: "Agendar", icon: CalendarHeart, primary: true },
   { to: "/servicos", label: "Serviços", icon: ListChecks },
   { to: "/contato", label: "Contato", icon: MessageCircle },
-] as const;
+];
 
 export function BottomNav() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
