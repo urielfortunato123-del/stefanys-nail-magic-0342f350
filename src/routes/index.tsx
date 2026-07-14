@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { HomeIcon, HeartHandshake, Sparkles, Clock, Gem, Instagram, MessageCircle, MapPin, Info, CalendarHeart, ChevronRight } from "lucide-react";
 import { businessConfig, whatsappLink } from "@/config/business";
 import { gallery } from "@/data/gallery";
-import logo from "/icon-512.png?url";
+import { LOGO_URL as logo } from "@/config/business";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -36,7 +36,7 @@ function Home() {
       <section className="glass-card relative overflow-hidden rounded-3xl p-6 pt-8 text-center">
         <div className="absolute -right-16 -top-16 h-56 w-56 rounded-full bg-[color:var(--pink)]/20 blur-3xl" aria-hidden />
         <div className="absolute -bottom-24 -left-16 h-56 w-56 rounded-full bg-[color:var(--gold)]/10 blur-3xl" aria-hidden />
-        <img src={logo} alt="Stefany Próspero" width={96} height={96} className="mx-auto mb-4 h-24 w-24 rounded-full ring-1 ring-white/10" />
+        <img src={logo} alt="Stefany Próspero" width={128} height={128} className="mx-auto mb-4 h-32 w-32 rounded-full object-contain ring-1 ring-white/10" />
         <p className="text-[10px] uppercase tracking-[0.35em] text-[color:var(--pink)]">Nail Designer</p>
         <h1 className="mt-2 font-display text-4xl font-semibold leading-tight">
           <span className="shimmer-text">Beleza até você</span>
