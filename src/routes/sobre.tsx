@@ -1,7 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Instagram, MessageCircle, CalendarHeart } from "lucide-react";
-import { businessConfig, whatsappLink } from "@/config/business";
-import logo from "/icon-512.png?url";
+import { businessConfig, whatsappLink, LOGO_URL } from "@/config/business";
+import { InstallHereButton } from "@/components/install-pwa";
+const logo = LOGO_URL;
 
 export const Route = createFileRoute("/sobre")({
   head: () => ({
@@ -17,7 +18,7 @@ function Sobre() {
   return (
     <div className="space-y-6">
       <div className="glass-card overflow-hidden rounded-3xl p-6 text-center">
-        <img src={logo} alt="Stefany Próspero" width={112} height={112} className="mx-auto h-28 w-28 rounded-full ring-1 ring-white/10" />
+        <img src={logo} alt="Stefany Próspero" width={128} height={128} className="mx-auto h-32 w-32 rounded-full object-contain ring-1 ring-white/10" />
         <p className="mt-3 text-[10px] uppercase tracking-[0.3em] text-[color:var(--pink)]">Nail Designer</p>
         <h1 className="mt-1 font-display text-3xl text-white">Stefany Próspero</h1>
         <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-white/70">
@@ -44,6 +45,7 @@ function Sobre() {
         <a href={whatsappLink("Olá, Stefany! 💅")} target="_blank" rel="noreferrer" className="flex items-center justify-center gap-2 rounded-full border border-white/20 py-3 text-sm font-medium text-white">
           <MessageCircle className="h-4 w-4" /> WhatsApp
         </a>
+        <InstallHereButton className="justify-center" />
       </div>
     </div>
   );

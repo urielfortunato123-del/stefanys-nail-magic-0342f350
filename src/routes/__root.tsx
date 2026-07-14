@@ -92,6 +92,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     links: [
       { rel: "stylesheet", href: appCss },
       { rel: "manifest", href: "/manifest.webmanifest" },
+      { rel: "icon", type: "image/png", href: "/favicon.png" },
       { rel: "icon", type: "image/png", sizes: "192x192", href: "/icon-192.png" },
       { rel: "apple-touch-icon", href: "/apple-touch-icon.png" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -126,13 +127,13 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <BookingProvider>
-        <div className="min-h-screen bg-[color:var(--navy)] pb-24 md:pb-0">
+        <div className="min-h-dvh bg-[color:var(--navy)] pb-[calc(88px+env(safe-area-inset-bottom))] md:pb-0">
           <AppHeader />
-          <InstallPWABanner />
           <main className="mx-auto max-w-2xl px-4 py-4 md:max-w-3xl">
             <Outlet />
           </main>
           <BottomNav />
+          <InstallPWABanner />
         </div>
       </BookingProvider>
     </QueryClientProvider>
