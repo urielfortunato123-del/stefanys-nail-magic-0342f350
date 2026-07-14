@@ -45,6 +45,7 @@ function Sobre() {
         <a href={whatsappLink("Olá, Stefany! 💅")} target="_blank" rel="noreferrer" className="flex items-center justify-center gap-2 rounded-full border border-white/20 py-3 text-sm font-medium text-white">
           <MessageCircle className="h-4 w-4" /> WhatsApp
         </a>
+        <InstallHereButton className="justify-center" />
       </div>
     </div>
   );
