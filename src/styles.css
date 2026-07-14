@@ -154,6 +154,15 @@
 }
 
 body {
-  padding-bottom: env(safe-area-inset-bottom);
+  padding-top: env(safe-area-inset-top);
 }
+
+html, body {
+  overflow-x: hidden;
+}
+
+input, textarea, select {
+  font-size: 16px; /* evita zoom automático no iOS ao focar */
+}
+
 
