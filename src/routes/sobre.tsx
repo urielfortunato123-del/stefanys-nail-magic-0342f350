@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Instagram, MessageCircle, CalendarHeart } from "lucide-react";
 import { businessConfig, whatsappLink, LOGO_URL } from "@/config/business";
+import { InstallHereButton } from "@/components/install-pwa";
 const logo = LOGO_URL;
 
 export const Route = createFileRoute("/sobre")({
