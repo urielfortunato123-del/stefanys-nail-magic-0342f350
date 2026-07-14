@@ -133,6 +133,7 @@ function RootComponent() {
           <main className="mx-auto max-w-2xl px-4 py-4 md:max-w-3xl">
             <Outlet />
           </main>
+          <SiteFooter />
           <BottomNav />
           <InstallPWABanner />
         </div>
