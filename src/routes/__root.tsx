@@ -15,6 +15,7 @@ import { BookingProvider } from "@/lib/booking-context";
 import { AppHeader } from "@/components/app-header";
 import { BottomNav } from "@/components/bottom-nav";
 import { InstallPWABanner } from "@/components/install-pwa";
+import { SiteFooter } from "@/components/site-footer";
 import { registerServiceWorker } from "@/lib/register-sw";
 
 function NotFoundComponent() {
