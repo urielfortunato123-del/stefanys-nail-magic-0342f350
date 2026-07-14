@@ -15,6 +15,7 @@ import { BookingProvider } from "@/lib/booking-context";
 import { AppHeader } from "@/components/app-header";
 import { BottomNav } from "@/components/bottom-nav";
 import { InstallPWABanner } from "@/components/install-pwa";
+import { SiteFooter } from "@/components/site-footer";
 import { registerServiceWorker } from "@/lib/register-sw";
 
 function NotFoundComponent() {
@@ -132,6 +133,7 @@ function RootComponent() {
           <main className="mx-auto max-w-2xl px-4 py-4 md:max-w-3xl">
             <Outlet />
           </main>
+          <SiteFooter />
           <BottomNav />
           <InstallPWABanner />
         </div>
