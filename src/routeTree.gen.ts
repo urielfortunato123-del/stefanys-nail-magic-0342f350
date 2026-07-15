@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SobreRouteImport } from './routes/sobre'
 import { Route as ServicosRouteImport } from './routes/servicos'
+import { Route as McpRouteImport } from './routes/mcp'
 import { Route as InstalarRouteImport } from './routes/instalar'
 import { Route as InspiracoesRouteImport } from './routes/inspiracoes'
 import { Route as ContatoRouteImport } from './routes/contato'
@@ -18,6 +19,9 @@ import { Route as AreaAtendidaRouteImport } from './routes/area-atendida'
 import { Route as AgendarRouteImport } from './routes/agendar'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AgendarSucessoRouteImport } from './routes/agendar.sucesso'
+import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
+import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]/list-tools'
+import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
 
 const SobreRoute = SobreRouteImport.update({
   id: '/sobre',
@@ -27,6 +31,11 @@ const SobreRoute = SobreRouteImport.update({
 const ServicosRoute = ServicosRouteImport.update({
   id: '/servicos',
   path: '/servicos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const McpRoute = McpRouteImport.update({
+  id: '/mcp',
+  path: '/mcp',
   getParentRoute: () => rootRouteImport,
 } as any)
 const InstalarRoute = InstalarRouteImport.update({
@@ -64,6 +73,24 @@ const AgendarSucessoRoute = AgendarSucessoRouteImport.update({
   path: '/sucesso',
   getParentRoute: () => AgendarRoute,
 } as any)
+const Char91DotwellKnownChar93OauthProtectedResourceRoute =
+  Char91DotwellKnownChar93OauthProtectedResourceRouteImport.update({
+    id: '/.well-known/oauth-protected-resource',
+    path: '/.well-known/oauth-protected-resource',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const Char91DotmcpChar93ListToolsRoute =
+  Char91DotmcpChar93ListToolsRouteImport.update({
+    id: '/.mcp/list-tools',
+    path: '/.mcp/list-tools',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const Char91DotmcpChar93InvokeToolToolRoute =
+  Char91DotmcpChar93InvokeToolToolRouteImport.update({
+    id: '/.mcp/invoke-tool/$tool',
+    path: '/.mcp/invoke-tool/$tool',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -72,9 +99,13 @@ export interface FileRoutesByFullPath {
   '/contato': typeof ContatoRoute
   '/inspiracoes': typeof InspiracoesRoute
   '/instalar': typeof InstalarRoute
+  '/mcp': typeof McpRoute
   '/servicos': typeof ServicosRoute
   '/sobre': typeof SobreRoute
+  '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
+  '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/agendar/sucesso': typeof AgendarSucessoRoute
+  '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -83,9 +114,13 @@ export interface FileRoutesByTo {
   '/contato': typeof ContatoRoute
   '/inspiracoes': typeof InspiracoesRoute
   '/instalar': typeof InstalarRoute
+  '/mcp': typeof McpRoute
   '/servicos': typeof ServicosRoute
   '/sobre': typeof SobreRoute
+  '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
+  '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/agendar/sucesso': typeof AgendarSucessoRoute
+  '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -95,9 +130,13 @@ export interface FileRoutesById {
   '/contato': typeof ContatoRoute
   '/inspiracoes': typeof InspiracoesRoute
   '/instalar': typeof InstalarRoute
+  '/mcp': typeof McpRoute
   '/servicos': typeof ServicosRoute
   '/sobre': typeof SobreRoute
+  '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
+  '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/agendar/sucesso': typeof AgendarSucessoRoute
+  '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -108,9 +147,13 @@ export interface FileRouteTypes {
     | '/contato'
     | '/inspiracoes'
     | '/instalar'
+    | '/mcp'
     | '/servicos'
     | '/sobre'
+    | '/.mcp/list-tools'
+    | '/.well-known/oauth-protected-resource'
     | '/agendar/sucesso'
+    | '/.mcp/invoke-tool/$tool'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -119,9 +162,13 @@ export interface FileRouteTypes {
     | '/contato'
     | '/inspiracoes'
     | '/instalar'
+    | '/mcp'
     | '/servicos'
     | '/sobre'
+    | '/.mcp/list-tools'
+    | '/.well-known/oauth-protected-resource'
     | '/agendar/sucesso'
+    | '/.mcp/invoke-tool/$tool'
   id:
     | '__root__'
     | '/'
@@ -130,9 +177,13 @@ export interface FileRouteTypes {
     | '/contato'
     | '/inspiracoes'
     | '/instalar'
+    | '/mcp'
     | '/servicos'
     | '/sobre'
+    | '/.mcp/list-tools'
+    | '/.well-known/oauth-protected-resource'
     | '/agendar/sucesso'
+    | '/.mcp/invoke-tool/$tool'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -142,8 +193,12 @@ export interface RootRouteChildren {
   ContatoRoute: typeof ContatoRoute
   InspiracoesRoute: typeof InspiracoesRoute
   InstalarRoute: typeof InstalarRoute
+  McpRoute: typeof McpRoute
   ServicosRoute: typeof ServicosRoute
   SobreRoute: typeof SobreRoute
+  Char91DotmcpChar93ListToolsRoute: typeof Char91DotmcpChar93ListToolsRoute
+  Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  Char91DotmcpChar93InvokeToolToolRoute: typeof Char91DotmcpChar93InvokeToolToolRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -160,6 +215,13 @@ declare module '@tanstack/react-router' {
       path: '/servicos'
       fullPath: '/servicos'
       preLoaderRoute: typeof ServicosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/mcp': {
+      id: '/mcp'
+      path: '/mcp'
+      fullPath: '/mcp'
+      preLoaderRoute: typeof McpRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/instalar': {
@@ -211,6 +273,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AgendarSucessoRouteImport
       parentRoute: typeof AgendarRoute
     }
+    '/.well-known/oauth-protected-resource': {
+      id: '/.well-known/oauth-protected-resource'
+      path: '/.well-known/oauth-protected-resource'
+      fullPath: '/.well-known/oauth-protected-resource'
+      preLoaderRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/.mcp/list-tools': {
+      id: '/.mcp/list-tools'
+      path: '/.mcp/list-tools'
+      fullPath: '/.mcp/list-tools'
+      preLoaderRoute: typeof Char91DotmcpChar93ListToolsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/.mcp/invoke-tool/$tool': {
+      id: '/.mcp/invoke-tool/$tool'
+      path: '/.mcp/invoke-tool/$tool'
+      fullPath: '/.mcp/invoke-tool/$tool'
+      preLoaderRoute: typeof Char91DotmcpChar93InvokeToolToolRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -232,8 +315,13 @@ const rootRouteChildren: RootRouteChildren = {
   ContatoRoute: ContatoRoute,
   InspiracoesRoute: InspiracoesRoute,
   InstalarRoute: InstalarRoute,
+  McpRoute: McpRoute,
   ServicosRoute: ServicosRoute,
   SobreRoute: SobreRoute,
+  Char91DotmcpChar93ListToolsRoute: Char91DotmcpChar93ListToolsRoute,
+  Char91DotwellKnownChar93OauthProtectedResourceRoute:
+    Char91DotwellKnownChar93OauthProtectedResourceRoute,
+  Char91DotmcpChar93InvokeToolToolRoute: Char91DotmcpChar93InvokeToolToolRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
