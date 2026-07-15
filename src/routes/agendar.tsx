@@ -386,6 +386,9 @@ const COLORS: { name: string; hex: string }[] = [
 const EXTRA_COLOR_OPTS = ["Outra cor", "Ainda não decidi"];
 
 function StepColors({ data, update }: StepProps) {
+  const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
+
   const toggleColor = (c: string) => {
     const set = new Set(data.colors);
     set.has(c) ? set.delete(c) : set.add(c);
@@ -396,12 +399,49 @@ function StepColors({ data, update }: StepProps) {
     set.has(c) ? set.delete(c) : set.add(c);
     update({ decorations: Array.from(set) });
   };
-  const onFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+
+  const removePhoto = () => {
+    update({
+      referenceImage: undefined,
+      referenceImageName: undefined,
+      referenceImageUrl: undefined,
+      referenceImagePath: undefined,
+    });
+    setUploadError(null);
+  };
+
+  const onFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
+    e.target.value = ""; // permite re-selecionar o mesmo arquivo
     if (!file) return;
+    if (!data.referenceImageConsent) {
+      setUploadError("Marque o consentimento para poder enviar a foto.");
+      return;
+    }
+    if (file.size > 15 * 1024 * 1024) {
+      setUploadError("A foto está muito grande (limite 15 MB).");
+      return;
+    }
+    setUploadError(null);
+    // Prévia local
     const reader = new FileReader();
-    reader.onload = () => update({ referenceImage: reader.result as string, referenceImageName: file.name });
+    reader.onload = () =>
+      update({ referenceImage: reader.result as string, referenceImageName: file.name });
     reader.readAsDataURL(file);
+
+    setUploading(true);
+    try {
+      const { path, signedUrl } = await uploadReferenceImage(file);
+      update({ referenceImagePath: path, referenceImageUrl: signedUrl });
+    } catch (err) {
+      console.error(err);
+      setUploadError(
+        "Não foi possível preparar a foto. Tente novamente ou envie diretamente pelo WhatsApp.",
+      );
+      update({ referenceImageUrl: undefined, referenceImagePath: undefined });
+    } finally {
+      setUploading(false);
+    }
   };
   return (
     <div>
