@@ -147,13 +147,15 @@ export function InstallModal({ autoOpenDelayMs = 2000, forceOpen, onClose }: Pro
         </button>
 
         <div className="text-center">
-          <img
-            src={LOGO_URL}
-            alt={businessConfig.professionalName}
-            width={88}
-            height={88}
-            className="mx-auto h-20 w-20 rounded-full object-contain ring-1 ring-white/10"
-          />
+          <div className="mx-auto h-20 w-20 overflow-hidden rounded-full">
+            <img
+              src={LOGO_URL}
+              alt={businessConfig.professionalName}
+              width={88}
+              height={88}
+              className="h-full w-full scale-105 object-cover"
+            />
+          </div>
           {installed ? (
             <>
               <h2 className="mt-3 font-display text-xl text-white">Aplicativo instalado com sucesso!</h2>
