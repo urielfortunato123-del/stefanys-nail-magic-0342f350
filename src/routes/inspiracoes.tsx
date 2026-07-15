@@ -87,6 +87,10 @@ function Inspiracoes() {
   const [shapeFilter, setShapeFilter] = useState<string>("Todos");
   const [colorFilter, setColorFilter] = useState<string>("Todas");
   const [finishFilter, setFinishFilter] = useState<string>("Todos");
+  const [lengthFilter, setLengthFilter] = useState<string>("Todos");
+  const [styleFilter, setStyleFilter] = useState<string>("Todos");
+  const [occasionFilter, setOccasionFilter] = useState<string>("Todas");
+  const [query, setQuery] = useState<string>("");
   const [selected, setSelected] = useState<GalleryItem | null>(null);
   const [fullscreen, setFullscreen] = useState<GalleryItem | null>(null);
   const [wantModel, setWantModel] = useState<GalleryItem | null>(null);
@@ -96,7 +100,7 @@ function Inspiracoes() {
   const [showTip, setShowTip] = useState(false);
   const [gallery, setGallery] = useState<GalleryItem[]>([]);
   const { favs, toggle } = useFavorites();
-  const { update } = useBooking();
+  const { state: booking, update } = useBooking();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -129,6 +133,18 @@ function Inspiracoes() {
     () => ["Todos", ...Array.from(new Set(gallery.map((g) => g.finish as string)))],
     [gallery],
   );
+  const lengths = useMemo<string[]>(
+    () => ["Todos", ...Array.from(new Set(gallery.map((g) => g.length ?? "Médio")))],
+    [gallery],
+  );
+  const styles = useMemo<string[]>(
+    () => ["Todos", ...Array.from(new Set(gallery.map((g) => g.style ?? g.category)))],
+    [gallery],
+  );
+  const occasions = useMemo<string[]>(
+    () => ["Todas", ...Array.from(new Set(gallery.flatMap((g) => g.occasions ?? [])))],
+    [gallery],
+  );
 
   const filtered = useMemo(
     () =>
@@ -137,23 +153,75 @@ function Inspiracoes() {
           (filter === "Todas" || g.category === filter) &&
           (shapeFilter === "Todos" || g.shape === shapeFilter) &&
           (colorFilter === "Todas" || g.mainColor === colorFilter) &&
-          (finishFilter === "Todos" || g.finish === finishFilter),
+          (finishFilter === "Todos" || g.finish === finishFilter) &&
+          (lengthFilter === "Todos" || (g.length ?? "Médio") === lengthFilter) &&
+          (styleFilter === "Todos" || (g.style ?? g.category) === styleFilter) &&
+          (occasionFilter === "Todas" || (g.occasions ?? []).includes(occasionFilter)) &&
+          matchesQuery(g, query),
       ),
-    [gallery, filter, shapeFilter, colorFilter, finishFilter],
+    [gallery, filter, shapeFilter, colorFilter, finishFilter, lengthFilter, styleFilter, occasionFilter, query],
   );
 
   const activeFilters =
     (filter !== "Todas" ? 1 : 0) +
     (shapeFilter !== "Todos" ? 1 : 0) +
     (colorFilter !== "Todas" ? 1 : 0) +
-    (finishFilter !== "Todos" ? 1 : 0);
+    (finishFilter !== "Todos" ? 1 : 0) +
+    (lengthFilter !== "Todos" ? 1 : 0) +
+    (styleFilter !== "Todos" ? 1 : 0) +
+    (occasionFilter !== "Todas" ? 1 : 0) +
+    (query.trim() ? 1 : 0);
 
   const clearAll = () => {
     setFilter("Todas");
     setShapeFilter("Todos");
     setColorFilter("Todas");
     setFinishFilter("Todos");
+    setLengthFilter("Todos");
+    setStyleFilter("Todos");
+    setOccasionFilter("Todas");
+    setQuery("");
   };
+
+  // Sugestões para você — combina filtros ativos + escolhas do agendamento
+  const suggestions = useMemo(() => {
+    const hasHints =
+      activeFilters > 0 ||
+      (booking.shape && booking.shape.length > 0) ||
+      (booking.styles && booking.styles.length > 0) ||
+      (booking.colors && booking.colors.length > 0) ||
+      (booking.decorations && booking.decorations.length > 0);
+    if (!hasHints || gallery.length === 0) return [] as GalleryItem[];
+
+    const hints = {
+      shape: shapeFilter !== "Todos" ? shapeFilter : booking.shape || undefined,
+      styles: [
+        ...(styleFilter !== "Todos" ? [styleFilter] : []),
+        ...(filter !== "Todas" ? [filter] : []),
+        ...(booking.styles ?? []),
+      ],
+      colors: [
+        ...(colorFilter !== "Todas" ? [colorFilter] : []),
+        ...(booking.colors ?? []),
+      ],
+      decorations: [
+        ...(finishFilter !== "Todos" ? [finishFilter] : []),
+        ...(booking.decorations ?? []),
+      ],
+      occasions: occasionFilter !== "Todas" ? [occasionFilter] : [],
+    };
+
+    return gallery
+      .map((g) => ({ g, score: scoreSuggestion(g, hints) }))
+      .filter((x) => x.score > 0)
+      .sort((a, b) => b.score - a.score)
+      .slice(0, 6)
+      .map((x) => x.g);
+  }, [
+    gallery, activeFilters, booking, filter, shapeFilter, colorFilter,
+    finishFilter, styleFilter, occasionFilter,
+  ]);
+
 
   const chooseAsReference = (g: GalleryItem) => {
     update({
