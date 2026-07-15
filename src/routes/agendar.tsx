@@ -515,24 +515,75 @@ function StepColors({ data, update }: StepProps) {
 
         <div>
           <p className="mb-2 text-xs font-medium uppercase tracking-wider text-white/50">Foto de inspiração</p>
+
+          <label className="mb-3 flex items-start gap-2 rounded-2xl border border-white/10 bg-white/[0.02] p-3 text-[11px] text-white/70">
+            <input
+              type="checkbox"
+              className="mt-0.5 h-3.5 w-3.5 accent-[color:var(--pink)]"
+              checked={!!data.referenceImageConsent}
+              onChange={(e) => update({ referenceImageConsent: e.target.checked })}
+            />
+            <span>
+              Autorizo o uso desta foto apenas para análise do serviço e atendimento pela Stefany.
+            </span>
+          </label>
+
           {data.referenceImage ? (
             <div className="relative">
               <img src={data.referenceImage} alt="Referência" className="max-h-64 w-full rounded-2xl object-cover" />
-              <button onClick={() => update({ referenceImage: undefined, referenceImageName: undefined })} aria-label="Remover" className="absolute right-2 top-2 grid h-8 w-8 place-items-center rounded-full bg-black/60 text-white">
+              <button
+                type="button"
+                onClick={removePhoto}
+                disabled={uploading}
+                aria-label="Remover"
+                className="absolute right-2 top-2 grid h-8 w-8 place-items-center rounded-full bg-black/60 text-white"
+              >
                 <X className="h-4 w-4" />
               </button>
+              {uploading && (
+                <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 rounded-2xl bg-black/60 text-white">
+                  <Loader2 className="h-6 w-6 animate-spin" />
+                  <span className="text-xs">Preparando sua foto para enviar à Stefany...</span>
+                </div>
+              )}
+              {!uploading && data.referenceImageUrl && (
+                <p className="mt-2 flex items-center gap-1 text-[11px] text-emerald-300">
+                  <Check className="h-3.5 w-3.5" /> Foto pronta para envio
+                </p>
+              )}
+              {!uploading && !data.referenceImageUrl && !uploadError && (
+                <p className="mt-2 text-[11px] text-white/60">Aguarde, estamos preparando sua foto...</p>
+              )}
+              <label className="mt-2 inline-flex cursor-pointer items-center gap-1 rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-xs text-white">
+                <Camera className="h-3.5 w-3.5" /> Trocar foto
+                <input type="file" accept="image/*" capture="environment" className="hidden" onChange={onFile} />
+              </label>
             </div>
           ) : (
-            <label className="flex cursor-pointer flex-col items-center gap-2 rounded-2xl border border-dashed border-white/20 bg-white/[0.02] p-6 text-center hover:bg-white/5">
+            <label
+              className={`flex flex-col items-center gap-2 rounded-2xl border border-dashed border-white/20 bg-white/[0.02] p-6 text-center ${data.referenceImageConsent ? "cursor-pointer hover:bg-white/5" : "cursor-not-allowed opacity-60"}`}
+            >
               <Camera className="h-6 w-6 text-[color:var(--pink)]" />
               <span className="text-sm text-white">Envie uma foto de inspiração</span>
               <span className="text-xs text-white/50">Abrir câmera ou galeria</span>
-              <input type="file" accept="image/*" capture="environment" className="hidden" onChange={onFile} />
+              <input
+                type="file"
+                accept="image/*"
+                capture="environment"
+                disabled={!data.referenceImageConsent}
+                className="hidden"
+                onChange={onFile}
+              />
             </label>
+          )}
+          {uploadError && (
+            <p className="mt-2 flex items-center gap-1 text-[11px] text-red-300">
+              <AlertCircle className="h-3.5 w-3.5" /> {uploadError}
+            </p>
           )}
           <p className="mt-2 text-[11px] text-[color:var(--gold)]">
             <Sparkles className="mr-1 inline h-3 w-3" />
-            Após abrir o WhatsApp, envie também a foto de referência selecionada.
+            Sua foto será enviada automaticamente com o pedido no WhatsApp.
           </p>
         </div>
       </div>
