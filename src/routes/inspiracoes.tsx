@@ -83,6 +83,9 @@ function NailImage({
 
 function Inspiracoes() {
   const [filter, setFilter] = useState<string>("Todas");
+  const [shapeFilter, setShapeFilter] = useState<string>("Todos");
+  const [colorFilter, setColorFilter] = useState<string>("Todas");
+  const [finishFilter, setFinishFilter] = useState<string>("Todos");
   const [selected, setSelected] = useState<GalleryItem | null>(null);
   const [fullscreen, setFullscreen] = useState<GalleryItem | null>(null);
   const [wantModel, setWantModel] = useState<GalleryItem | null>(null);
@@ -102,10 +105,43 @@ function Inspiracoes() {
     }
   }, [wantModel]);
 
-  const filtered = useMemo(
-    () => (filter === "Todas" ? gallery : gallery.filter((g) => g.category === filter)),
-    [filter],
+  const shapes = useMemo(
+    () => ["Todos", ...Array.from(new Set(gallery.map((g) => g.shape)))],
+    [],
   );
+  const colors = useMemo(
+    () => ["Todas", ...Array.from(new Set(gallery.map((g) => g.mainColor)))],
+    [],
+  );
+  const finishes = useMemo(
+    () => ["Todos", ...Array.from(new Set(gallery.map((g) => g.finish)))],
+    [],
+  );
+
+  const filtered = useMemo(
+    () =>
+      gallery.filter(
+        (g) =>
+          (filter === "Todas" || g.category === filter) &&
+          (shapeFilter === "Todos" || g.shape === shapeFilter) &&
+          (colorFilter === "Todas" || g.mainColor === colorFilter) &&
+          (finishFilter === "Todos" || g.finish === finishFilter),
+      ),
+    [filter, shapeFilter, colorFilter, finishFilter],
+  );
+
+  const activeFilters =
+    (filter !== "Todas" ? 1 : 0) +
+    (shapeFilter !== "Todos" ? 1 : 0) +
+    (colorFilter !== "Todas" ? 1 : 0) +
+    (finishFilter !== "Todos" ? 1 : 0);
+
+  const clearAll = () => {
+    setFilter("Todas");
+    setShapeFilter("Todos");
+    setColorFilter("Todas");
+    setFinishFilter("Todos");
+  };
 
   const chooseAsReference = (g: GalleryItem) => {
     update({
@@ -141,6 +177,32 @@ function Inspiracoes() {
     } catch {}
   };
 
+  const renderChipRow = (
+    label: string,
+    options: readonly string[] | string[],
+    value: string,
+    onChange: (v: string) => void,
+  ) => (
+    <div className="-mx-4 flex items-center gap-2 overflow-x-auto px-4 no-scrollbar">
+      <span className="shrink-0 text-[10px] uppercase tracking-[0.25em] text-white/40">
+        {label}
+      </span>
+      {options.map((o) => (
+        <button
+          key={o}
+          onClick={() => onChange(o)}
+          className={`shrink-0 rounded-full px-3 py-1.5 text-xs font-medium transition-all ${
+            value === o
+              ? "bg-[#F7A8BD] text-[#061A33]"
+              : "border border-white/15 bg-white/5 text-white/80 hover:bg-white/10"
+          }`}
+        >
+          {o}
+        </button>
+      ))}
+    </div>
+  );
+
   return (
     <div className="space-y-6">
       <div className="px-1">
@@ -151,24 +213,48 @@ function Inspiracoes() {
         </p>
       </div>
 
-      <div className="-mx-4 flex snap-x gap-2 overflow-x-auto scroll-smooth whitespace-nowrap px-4 pb-2 no-scrollbar">
-        {galleryCategories.map((c) => (
-          <button
-            key={c}
-            onClick={() => setFilter(c)}
-            className={`shrink-0 snap-start rounded-full px-4 py-2 text-sm font-medium transition-all ${
-              filter === c
-                ? "bg-[#F7A8BD] text-[#061A33]"
-                : "border border-white/15 bg-white/5 text-white hover:bg-white/10"
-            }`}
-          >
-            {c}
-          </button>
-        ))}
+      <div className="space-y-2">
+        <div className="-mx-4 flex snap-x gap-2 overflow-x-auto scroll-smooth whitespace-nowrap px-4 pb-1 no-scrollbar">
+          {galleryCategories.map((c) => (
+            <button
+              key={c}
+              onClick={() => setFilter(c)}
+              className={`shrink-0 snap-start rounded-full px-4 py-2 text-sm font-medium transition-all ${
+                filter === c
+                  ? "bg-[#F7A8BD] text-[#061A33]"
+                  : "border border-white/15 bg-white/5 text-white hover:bg-white/10"
+              }`}
+            >
+              {c}
+            </button>
+          ))}
+        </div>
+        {renderChipRow("Formato", shapes, shapeFilter, setShapeFilter)}
+        {renderChipRow("Cor", colors, colorFilter, setColorFilter)}
+        {renderChipRow("Acabamento", finishes, finishFilter, setFinishFilter)}
+        <div className="flex items-center justify-between px-1 pt-1 text-[11px] text-white/50">
+          <span>
+            {filtered.length} {filtered.length === 1 ? "modelo" : "modelos"}
+          </span>
+          {activeFilters > 0 && (
+            <button
+              onClick={clearAll}
+              className="rounded-full border border-white/15 bg-white/5 px-3 py-1 text-white/80 hover:bg-white/10"
+            >
+              Limpar filtros
+            </button>
+          )}
+        </div>
       </div>
 
       {filter !== "Todas" && categoryDescriptions[filter] && (
         <p className="px-1 text-sm italic text-white/70">{categoryDescriptions[filter]}</p>
+      )}
+
+      {filtered.length === 0 && (
+        <div className="rounded-3xl border border-white/10 bg-white/5 p-6 text-center text-sm text-white/70">
+          Nenhum modelo com essa combinação. Tente ajustar os filtros.
+        </div>
       )}
 
       {/* Masonry via CSS columns */}
