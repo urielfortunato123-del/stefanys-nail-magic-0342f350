@@ -333,7 +333,7 @@ function DraftCard({
               <input
                 value={d.title}
                 onChange={(e) => onChange({ title: e.target.value })}
-                className="input"
+                className="w-full rounded-xl border border-white/15 bg-white/5 px-3 py-2 text-sm text-white outline-none focus:border-[color:var(--pink)]"
                 placeholder="Ex: Francesinha rosa"
               />
             </Field>
@@ -347,7 +347,7 @@ function DraftCard({
               <input
                 value={d.mainColor}
                 onChange={(e) => onChange({ mainColor: e.target.value })}
-                className="input"
+                className="w-full rounded-xl border border-white/15 bg-white/5 px-3 py-2 text-sm text-white outline-none focus:border-[color:var(--pink)]"
                 placeholder="Ex: Nude com cristais"
               />
             </Field>
@@ -358,14 +358,14 @@ function DraftCard({
               <input
                 value={d.duration}
                 onChange={(e) => onChange({ duration: e.target.value })}
-                className="input"
+                className="w-full rounded-xl border border-white/15 bg-white/5 px-3 py-2 text-sm text-white outline-none focus:border-[color:var(--pink)]"
               />
             </Field>
             <Field label="Durabilidade">
               <input
                 value={d.durability}
                 onChange={(e) => onChange({ durability: e.target.value })}
-                className="input"
+                className="w-full rounded-xl border border-white/15 bg-white/5 px-3 py-2 text-sm text-white outline-none focus:border-[color:var(--pink)]"
               />
             </Field>
           </div>
@@ -444,7 +444,7 @@ function Select({
     <select
       value={value}
       onChange={(e) => onChange(e.target.value)}
-      className="input"
+      className="w-full rounded-xl border border-white/15 bg-white/5 px-3 py-2 text-sm text-white outline-none focus:border-[color:var(--pink)]"
     >
       {options.map((o) => (
         <option key={o} value={o} className="bg-[#061A33]">
