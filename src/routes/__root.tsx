@@ -16,6 +16,7 @@ import { AppHeader } from "@/components/app-header";
 import { BottomNav } from "@/components/bottom-nav";
 import { InstallPWABanner } from "@/components/install-pwa";
 import { SiteFooter } from "@/components/site-footer";
+import { AssistantWidget } from "@/components/assistant-widget";
 import { registerServiceWorker } from "@/lib/register-sw";
 
 function NotFoundComponent() {
@@ -136,6 +137,7 @@ function RootComponent() {
           <SiteFooter />
           <BottomNav />
           <InstallPWABanner />
+          <AssistantWidget />
         </div>
       </BookingProvider>
     </QueryClientProvider>
