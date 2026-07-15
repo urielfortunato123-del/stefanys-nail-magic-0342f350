@@ -294,6 +294,26 @@ function Inspiracoes() {
       </div>
 
       <div className="space-y-2">
+        <label className="flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-2.5">
+          <Search className="h-4 w-4 shrink-0 text-white/50" />
+          <input
+            type="search"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Busque por cor, estilo, formato ou ocasião"
+            className="w-full bg-transparent text-sm text-white placeholder:text-white/40 outline-none"
+          />
+          {query && (
+            <button
+              onClick={() => setQuery("")}
+              className="rounded-full p-1 text-white/50 hover:bg-white/10"
+              aria-label="Limpar busca"
+            >
+              <X className="h-3.5 w-3.5" />
+            </button>
+          )}
+        </label>
+
         <div className="-mx-4 flex snap-x gap-2 overflow-x-auto scroll-smooth whitespace-nowrap px-4 pb-1 no-scrollbar">
           {galleryCategories.map((c) => (
             <button
@@ -309,9 +329,12 @@ function Inspiracoes() {
             </button>
           ))}
         </div>
-        {renderChipRow("Formato", shapes, shapeFilter, setShapeFilter)}
         {renderChipRow("Cor", colors, colorFilter, setColorFilter)}
+        {renderChipRow("Formato", shapes, shapeFilter, setShapeFilter)}
+        {renderChipRow("Comprimento", lengths, lengthFilter, setLengthFilter)}
+        {renderChipRow("Estilo", styles, styleFilter, setStyleFilter)}
         {renderChipRow("Acabamento", finishes, finishFilter, setFinishFilter)}
+        {occasions.length > 1 && renderChipRow("Ocasião", occasions, occasionFilter, setOccasionFilter)}
         <div className="flex items-center justify-between px-1 pt-1 text-[11px] text-white/50">
           <span>
             {filtered.length} {filtered.length === 1 ? "modelo" : "modelos"}
@@ -327,9 +350,43 @@ function Inspiracoes() {
         </div>
       </div>
 
+      {suggestions.length > 0 && (
+        <section className="space-y-2">
+          <div className="flex items-center justify-between px-1">
+            <h2 className="flex items-center gap-1.5 text-sm font-semibold text-white">
+              <Sparkles className="h-3.5 w-3.5 text-[color:var(--pink)]" />
+              Sugestões para você
+            </h2>
+            <span className="text-[10px] text-white/40">Com base nas suas escolhas</span>
+          </div>
+          <div className="-mx-4 flex gap-3 overflow-x-auto px-4 pb-1 no-scrollbar">
+            {suggestions.map((g) => (
+              <button
+                key={`sug-${g.id}`}
+                onClick={() => setSelected(g)}
+                className="w-32 shrink-0 overflow-hidden rounded-2xl bg-white text-left shadow-[0_8px_24px_-12px_rgba(0,0,0,0.5)]"
+              >
+                <NailImage src={g.imageUrl} alt={g.title} className="aspect-square" />
+                <div className="p-2">
+                  <p className="truncate text-[11px] font-semibold text-[#061A33]">{g.title}</p>
+                  <p className="truncate text-[10px] text-black/50">{g.category}</p>
+                </div>
+              </button>
+            ))}
+          </div>
+        </section>
+      )}
+
       {filter !== "Todas" && categoryDescriptions[filter] && (
         <p className="px-1 text-sm italic text-white/70">{categoryDescriptions[filter]}</p>
       )}
+
+      {filtered.length === 0 && (
+        <div className="rounded-3xl border border-white/10 bg-white/5 p-6 text-center text-sm text-white/70">
+          Nenhum modelo com essa combinação. Tente ajustar os filtros ou a busca.
+        </div>
+      )}
+
 
       {filtered.length === 0 && (
         <div className="rounded-3xl border border-white/10 bg-white/5 p-6 text-center text-sm text-white/70">
