@@ -85,9 +85,22 @@ function Inspiracoes() {
   const [filter, setFilter] = useState<string>("Todas");
   const [selected, setSelected] = useState<GalleryItem | null>(null);
   const [fullscreen, setFullscreen] = useState<GalleryItem | null>(null);
+  const [wantModel, setWantModel] = useState<GalleryItem | null>(null);
+  const [obs, setObs] = useState("");
+  const [sharing, setSharing] = useState(false);
+  const [hideTip, setHideTipState] = useState(false);
+  const [showTip, setShowTip] = useState(false);
   const { favs, toggle } = useFavorites();
   const { update } = useBooking();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (wantModel) {
+      setObs("");
+      setShowTip(shouldShowShareTip());
+      setHideTipState(false);
+    }
+  }, [wantModel]);
 
   const filtered = useMemo(
     () => (filter === "Todas" ? gallery : gallery.filter((g) => g.category === filter)),
@@ -100,7 +113,20 @@ function Inspiracoes() {
       referenceModel: { id: g.id, title: g.title, imageUrl: g.imageUrl, category: g.category },
     });
     setSelected(null);
+    setWantModel(null);
     navigate({ to: "/agendar" });
+  };
+
+  const handleSendModel = async () => {
+    if (!wantModel || sharing) return;
+    setSharing(true);
+    try {
+      if (hideTip) setHideShareTip(true);
+      await shareModel(wantModel, obs);
+      setWantModel(null);
+    } finally {
+      setSharing(false);
+    }
   };
 
   const shareItem = async (g: GalleryItem) => {
