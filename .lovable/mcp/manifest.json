@@ -1,0 +1,121 @@
+{
+  "version": 1,
+  "sdk_version": "0.22.0",
+  "path": "/mcp",
+  "auth": {
+    "type": "none"
+  },
+  "mcp": {
+    "server": {
+      "name": "stefany-nails-mcp",
+      "version": "0.1.0",
+      "title": "Stefany Nails MCP"
+    },
+    "tools": [
+      {
+        "name": "get_business_info",
+        "title": "Obter informações do negócio",
+        "description": "Retorna informações públicas da nail designer Stefany Próspero: nome, profissão, slogan, área de atendimento, WhatsApp e Instagram.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {}
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_services",
+        "title": "Listar serviços",
+        "description": "Lista os serviços oferecidos pela Stefany Próspero (alongamento, manutenção, esmaltação, nail art, etc.) com duração estimada.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {}
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_gallery",
+        "title": "Listar galeria de inspirações",
+        "description": "Retorna a galeria pública de trabalhos e inspirações da Stefany, opcionalmente filtrada por categoria.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "category": {
+              "description": "Categoria para filtrar (opcional). Ex.: 'Delicadas', 'Francesinha'.",
+              "type": "string",
+              "enum": [
+                "Todas",
+                "Delicadas",
+                "Francesinha",
+                "Coloridas",
+                "Rosa",
+                "Preto",
+                "Glitter",
+                "Artísticas"
+              ]
+            }
+          }
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_available_times",
+        "title": "Listar horários disponíveis",
+        "description": "Retorna a lista de horários provisórios oferecidos para agendamento e os períodos do dia (manhã, tarde, noite).",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {}
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "create_whatsapp_link",
+        "title": "Gerar link do WhatsApp",
+        "description": "Gera um link pré-preenchido do WhatsApp da Stefany com a mensagem informada. Não envia mensagem — apenas devolve a URL.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": true
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "message": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Texto da mensagem a ser pré-preenchida no WhatsApp."
+            }
+          },
+          "required": [
+            "message"
+          ]
+        },
+        "outputSchema": null
+      }
+    ]
+  }
+}
