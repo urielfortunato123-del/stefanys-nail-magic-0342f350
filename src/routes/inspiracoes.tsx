@@ -1,24 +1,69 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
-import { X, Sparkles, ImageOff } from "lucide-react";
-import { gallery, galleryCategories, type GalleryItem } from "@/data/gallery";
+import { useEffect, useMemo, useState } from "react";
+import { X, Sparkles, ImageOff, Heart, Share2, Maximize2, MessageCircle } from "lucide-react";
+import {
+  gallery,
+  galleryCategories,
+  categoryDescriptions,
+  type GalleryItem,
+} from "@/data/gallery";
 import { useBooking } from "@/lib/booking-context";
+import { whatsappLink } from "@/config/business";
 
 export const Route = createFileRoute("/inspiracoes")({
   head: () => ({
     meta: [
       { title: "Inspirações — Stefany Próspero Nail Designer" },
-      { name: "description", content: "Galeria de inspirações de nail art, francesinha, glitter e mais." },
+      {
+        name: "description",
+        content:
+          "Galeria premium de trabalhos: francesinha, decoradas, coloridas, luxo, minimalistas e nail art.",
+      },
     ],
   }),
   component: Inspiracoes,
 });
 
-function NailImage({ src, alt }: { src: string; alt: string }) {
+const FAV_KEY = "gallery:favorites";
+
+function useFavorites() {
+  const [favs, setFavs] = useState<Set<string>>(() => {
+    if (typeof window === "undefined") return new Set();
+    try {
+      return new Set(JSON.parse(localStorage.getItem(FAV_KEY) || "[]"));
+    } catch {
+      return new Set();
+    }
+  });
+  useEffect(() => {
+    try {
+      localStorage.setItem(FAV_KEY, JSON.stringify([...favs]));
+    } catch {}
+  }, [favs]);
+  const toggle = (id: string) =>
+    setFavs((s) => {
+      const n = new Set(s);
+      n.has(id) ? n.delete(id) : n.add(id);
+      return n;
+    });
+  return { favs, toggle };
+}
+
+function NailImage({
+  src,
+  alt,
+  className = "",
+}: {
+  src: string;
+  alt: string;
+  className?: string;
+}) {
   const [errored, setErrored] = useState(false);
   if (errored) {
     return (
-      <div className="flex aspect-[4/5] w-full flex-col items-center justify-center gap-1 bg-[#08213D] text-white/50">
+      <div
+        className={`flex aspect-[4/5] w-full flex-col items-center justify-center gap-1 bg-white text-black/40 ${className}`}
+      >
         <ImageOff className="h-6 w-6" />
         <span className="text-[10px]">Imagem em breve</span>
       </div>
@@ -29,11 +74,9 @@ function NailImage({ src, alt }: { src: string; alt: string }) {
       src={src}
       alt={alt}
       loading="lazy"
-      onError={(e) => {
-        (e.currentTarget as HTMLImageElement).src = "/images/nails/placeholder.jpg";
-        setErrored(false);
-      }}
-      className="aspect-[4/5] w-full bg-[#08213D] object-cover"
+      decoding="async"
+      onError={() => setErrored(true)}
+      className={`w-full bg-white object-cover ${className}`}
     />
   );
 }
@@ -41,6 +84,8 @@ function NailImage({ src, alt }: { src: string; alt: string }) {
 function Inspiracoes() {
   const [filter, setFilter] = useState<string>("Todas");
   const [selected, setSelected] = useState<GalleryItem | null>(null);
+  const [fullscreen, setFullscreen] = useState<GalleryItem | null>(null);
+  const { favs, toggle } = useFavorites();
   const { update } = useBooking();
   const navigate = useNavigate();
 
@@ -58,12 +103,26 @@ function Inspiracoes() {
     navigate({ to: "/agendar" });
   };
 
+  const shareItem = async (g: GalleryItem) => {
+    const url = g.imageUrl;
+    const text = `Olha esse modelo da Stefany: ${g.title}`;
+    try {
+      if (navigator.share) {
+        await navigator.share({ title: g.title, text, url });
+        return;
+      }
+      await navigator.clipboard.writeText(`${text} — ${url}`);
+    } catch {}
+  };
+
   return (
-    <div className="space-y-5">
+    <div className="space-y-6">
       <div className="px-1">
         <p className="text-[10px] uppercase tracking-[0.3em] text-[color:var(--pink)]">Galeria</p>
         <h1 className="font-display text-3xl text-white">Inspirações</h1>
-        <p className="mt-1 text-sm text-white/60">Escolha um modelo e comece seu agendamento.</p>
+        <p className="mt-1 text-sm text-white/60">
+          Trabalhos reais da Stefany. Toque em uma imagem para ver os detalhes.
+        </p>
       </div>
 
       <div className="-mx-4 flex snap-x gap-2 overflow-x-auto scroll-smooth whitespace-nowrap px-4 pb-2 no-scrollbar">
@@ -82,47 +141,220 @@ function Inspiracoes() {
         ))}
       </div>
 
-      <div key={filter} className="grid animate-in fade-in grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
-        {filtered.map((g) => (
-          <button
-            key={g.id}
-            onClick={() => setSelected(g)}
-            className="overflow-hidden rounded-2xl border border-white/10 bg-[#08213D] text-left shadow-sm transition-transform active:scale-[0.98]"
-          >
-            <NailImage src={g.imageUrl} alt={g.title} />
-            <div className="p-3">
-              <h3 className="truncate text-sm font-semibold text-white">{g.title}</h3>
-              <p className="mt-1 text-xs text-white/60">{g.category}</p>
+      {filter !== "Todas" && categoryDescriptions[filter] && (
+        <p className="px-1 text-sm italic text-white/70">{categoryDescriptions[filter]}</p>
+      )}
+
+      {/* Masonry via CSS columns */}
+      <div
+        key={filter}
+        className="animate-in fade-in [column-fill:_balance] columns-2 gap-4 sm:columns-3 lg:columns-4"
+      >
+        {filtered.map((g) => {
+          const isFav = favs.has(g.id);
+          return (
+            <div
+              key={g.id}
+              className="mb-4 break-inside-avoid overflow-hidden rounded-3xl bg-white shadow-[0_8px_24px_-12px_rgba(0,0,0,0.5)] transition-transform duration-300 hover:-translate-y-0.5"
+            >
+              <button
+                onClick={() => setSelected(g)}
+                className="group relative block w-full text-left"
+                aria-label={`Abrir ${g.title}`}
+              >
+                <NailImage
+                  src={g.imageUrl}
+                  alt={g.title}
+                  className="transition-transform duration-500 group-hover:scale-[1.03]"
+                />
+                <span className="pointer-events-none absolute right-2 top-2 rounded-full bg-black/40 p-1.5 text-white opacity-0 backdrop-blur transition-opacity group-hover:opacity-100">
+                  <Maximize2 className="h-3.5 w-3.5" />
+                </span>
+              </button>
+              <div className="px-3 pb-3 pt-2.5">
+                <div className="flex items-start justify-between gap-2">
+                  <div className="min-w-0">
+                    <h3 className="truncate text-sm font-semibold text-[#061A33]">{g.title}</h3>
+                    <p className="mt-0.5 truncate text-[11px] text-black/50">{g.category}</p>
+                  </div>
+                  <div className="flex shrink-0 items-center gap-1">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        toggle(g.id);
+                      }}
+                      aria-label="Favoritar"
+                      className="rounded-full p-1.5 text-[#F7A8BD] hover:bg-black/5"
+                    >
+                      <Heart
+                        className={`h-4 w-4 ${isFav ? "fill-[#F7A8BD]" : ""}`}
+                      />
+                    </button>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setFullscreen(g);
+                      }}
+                      aria-label="Ver em tela cheia"
+                      className="rounded-full p-1.5 text-black/60 hover:bg-black/5"
+                    >
+                      <Maximize2 className="h-4 w-4" />
+                    </button>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        shareItem(g);
+                      }}
+                      aria-label="Compartilhar"
+                      className="rounded-full p-1.5 text-black/60 hover:bg-black/5"
+                    >
+                      <Share2 className="h-4 w-4" />
+                    </button>
+                  </div>
+                </div>
+                <a
+                  href={whatsappLink(
+                    `Olá! Vi esse modelo (${g.title}) no aplicativo e gostaria de fazer essa unha. 💅✨`,
+                  )}
+                  target="_blank"
+                  rel="noreferrer"
+                  onClick={(e) => e.stopPropagation()}
+                  className="mt-2.5 flex w-full items-center justify-center gap-1.5 rounded-full bg-[#25D366] py-2 text-xs font-semibold text-white shadow-sm"
+                >
+                  <MessageCircle className="h-3.5 w-3.5" /> Quero esta unha
+                </a>
+              </div>
             </div>
-          </button>
-        ))}
+          );
+        })}
       </div>
 
+      {/* Detail modal */}
       {selected && (
-        <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/80 p-0 sm:items-center sm:p-4" onClick={() => setSelected(null)}>
-          <div className="w-full max-w-md overflow-hidden rounded-t-3xl border border-white/10 bg-[#061A33] sm:rounded-3xl" onClick={(e) => e.stopPropagation()}>
-            <NailImage src={selected.imageUrl} alt={selected.title} />
+        <div
+          className="fixed inset-0 z-50 flex items-end justify-center bg-black/80 p-0 sm:items-center sm:p-4 animate-in fade-in"
+          onClick={() => setSelected(null)}
+        >
+          <div
+            className="w-full max-w-md overflow-hidden rounded-t-3xl bg-white sm:rounded-3xl animate-in slide-in-from-bottom-4"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              type="button"
+              onClick={() => setFullscreen(selected)}
+              className="block w-full"
+              aria-label="Ampliar imagem"
+            >
+              <NailImage src={selected.imageUrl} alt={selected.title} />
+            </button>
             <div className="p-5">
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
-                  <p className="text-[10px] uppercase tracking-widest text-[color:var(--pink)]">{selected.category}</p>
-                  <h2 className="truncate font-display text-xl text-white">{selected.title}</h2>
-                  <p className="mt-1 text-xs text-white/60">Cores: {selected.colors.join(", ")}</p>
+                  <p className="text-[10px] uppercase tracking-widest text-[color:var(--pink)]">
+                    {selected.category}
+                  </p>
+                  <h2 className="truncate font-display text-xl text-[#061A33]">
+                    {selected.title}
+                  </h2>
                 </div>
-                <button onClick={() => setSelected(null)} aria-label="Fechar" className="shrink-0 rounded-full bg-white/5 p-2 text-white/70">
+                <button
+                  onClick={() => setSelected(null)}
+                  aria-label="Fechar"
+                  className="shrink-0 rounded-full bg-black/5 p-2 text-black/60"
+                >
                   <X className="h-4 w-4" />
                 </button>
               </div>
-              <div className="mt-4 grid gap-2">
-                <button onClick={() => chooseAsReference(selected)} className="flex w-full items-center justify-center gap-2 rounded-full bg-[#F7A8BD] py-3 text-sm font-semibold text-[#061A33] pink-glow">
-                  <Sparkles className="h-4 w-4" /> Quero este modelo
+
+              <dl className="mt-4 grid grid-cols-2 gap-3 text-sm">
+                <div>
+                  <dt className="text-[10px] uppercase tracking-widest text-black/40">Formato</dt>
+                  <dd className="text-[#061A33]">{selected.shape}</dd>
+                </div>
+                <div>
+                  <dt className="text-[10px] uppercase tracking-widest text-black/40">
+                    Cor principal
+                  </dt>
+                  <dd className="text-[#061A33]">{selected.mainColor}</dd>
+                </div>
+                <div>
+                  <dt className="text-[10px] uppercase tracking-widest text-black/40">
+                    Acabamento
+                  </dt>
+                  <dd className="text-[#061A33]">{selected.finish}</dd>
+                </div>
+                <div>
+                  <dt className="text-[10px] uppercase tracking-widest text-black/40">
+                    Tempo médio
+                  </dt>
+                  <dd className="text-[#061A33]">{selected.duration}</dd>
+                </div>
+                <div className="col-span-2">
+                  <dt className="text-[10px] uppercase tracking-widest text-black/40">
+                    Durabilidade
+                  </dt>
+                  <dd className="text-[#061A33]">{selected.durability}</dd>
+                </div>
+              </dl>
+
+              <div className="mt-5 grid gap-2">
+                <a
+                  href={whatsappLink(
+                    `Olá! Vi esse modelo (${selected.title}) no aplicativo e gostaria de fazer essa unha. 💅✨`,
+                  )}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="flex w-full items-center justify-center gap-2 rounded-full bg-[#25D366] py-3 text-sm font-semibold text-white shadow-sm"
+                >
+                  <MessageCircle className="h-4 w-4" /> Quero esta unha
+                </a>
+                <button
+                  onClick={() => chooseAsReference(selected)}
+                  className="flex w-full items-center justify-center gap-2 rounded-full bg-[#F7A8BD] py-3 text-sm font-semibold text-[#061A33] pink-glow"
+                >
+                  <Sparkles className="h-4 w-4" /> Usar como referência no agendamento
                 </button>
-                <button onClick={() => setSelected(null)} className="w-full rounded-full border border-white/15 py-2.5 text-sm text-white/80">
-                  Fechar
-                </button>
+                <div className="flex items-center justify-center gap-2">
+                  <button
+                    onClick={() => toggle(selected.id)}
+                    className="flex items-center gap-1.5 rounded-full px-3 py-2 text-xs text-black/60 hover:bg-black/5"
+                  >
+                    <Heart
+                      className={`h-4 w-4 ${favs.has(selected.id) ? "fill-[#F7A8BD] text-[#F7A8BD]" : ""}`}
+                    />
+                    {favs.has(selected.id) ? "Favoritado" : "Favoritar"}
+                  </button>
+                  <button
+                    onClick={() => shareItem(selected)}
+                    className="flex items-center gap-1.5 rounded-full px-3 py-2 text-xs text-black/60 hover:bg-black/5"
+                  >
+                    <Share2 className="h-4 w-4" /> Compartilhar
+                  </button>
+                </div>
               </div>
             </div>
           </div>
+        </div>
+      )}
+
+      {/* Fullscreen zoom */}
+      {fullscreen && (
+        <div
+          className="fixed inset-0 z-[60] flex items-center justify-center bg-black animate-in fade-in"
+          onClick={() => setFullscreen(null)}
+        >
+          <button
+            onClick={() => setFullscreen(null)}
+            aria-label="Fechar"
+            className="absolute right-4 top-4 rounded-full bg-white/10 p-2 text-white backdrop-blur"
+          >
+            <X className="h-5 w-5" />
+          </button>
+          <img
+            src={fullscreen.imageUrl}
+            alt={fullscreen.title}
+            className="max-h-[92vh] max-w-[96vw] object-contain"
+          />
         </div>
       )}
     </div>
