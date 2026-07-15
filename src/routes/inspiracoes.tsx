@@ -100,7 +100,7 @@ function Inspiracoes() {
   const [showTip, setShowTip] = useState(false);
   const [gallery, setGallery] = useState<GalleryItem[]>([]);
   const { favs, toggle } = useFavorites();
-  const { state: booking, update } = useBooking();
+  const { data: booking, update } = useBooking();
   const navigate = useNavigate();
 
   useEffect(() => {
