@@ -238,17 +238,16 @@ function Inspiracoes() {
                     </button>
                   </div>
                 </div>
-                <a
-                  href={whatsappLink(
-                    `Olá! Vi esse modelo (${g.title}) no aplicativo e gostaria de fazer essa unha. 💅✨`,
-                  )}
-                  target="_blank"
-                  rel="noreferrer"
-                  onClick={(e) => e.stopPropagation()}
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setWantModel(g);
+                  }}
                   className="mt-2.5 flex w-full items-center justify-center gap-1.5 rounded-full bg-[#25D366] py-2 text-xs font-semibold text-white shadow-sm"
                 >
                   <MessageCircle className="h-3.5 w-3.5" /> Quero esta unha
-                </a>
+                </button>
               </div>
             </div>
           );
