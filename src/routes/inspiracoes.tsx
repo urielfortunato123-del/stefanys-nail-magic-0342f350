@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { X, Sparkles, ImageOff, Heart, Share2, Maximize2, MessageCircle } from "lucide-react";
+import { X, Sparkles, ImageOff, Heart, Share2, Maximize2, MessageCircle, Loader2 } from "lucide-react";
 import {
   gallery,
   galleryCategories,
@@ -8,7 +8,7 @@ import {
   type GalleryItem,
 } from "@/data/gallery";
 import { useBooking } from "@/lib/booking-context";
-import { whatsappLink } from "@/config/business";
+import { shareModel, shouldShowShareTip, setHideShareTip } from "@/lib/share-model";
 
 export const Route = createFileRoute("/inspiracoes")({
   head: () => ({
@@ -85,9 +85,22 @@ function Inspiracoes() {
   const [filter, setFilter] = useState<string>("Todas");
   const [selected, setSelected] = useState<GalleryItem | null>(null);
   const [fullscreen, setFullscreen] = useState<GalleryItem | null>(null);
+  const [wantModel, setWantModel] = useState<GalleryItem | null>(null);
+  const [obs, setObs] = useState("");
+  const [sharing, setSharing] = useState(false);
+  const [hideTip, setHideTipState] = useState(false);
+  const [showTip, setShowTip] = useState(false);
   const { favs, toggle } = useFavorites();
   const { update } = useBooking();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (wantModel) {
+      setObs("");
+      setShowTip(shouldShowShareTip());
+      setHideTipState(false);
+    }
+  }, [wantModel]);
 
   const filtered = useMemo(
     () => (filter === "Todas" ? gallery : gallery.filter((g) => g.category === filter)),
@@ -100,7 +113,20 @@ function Inspiracoes() {
       referenceModel: { id: g.id, title: g.title, imageUrl: g.imageUrl, category: g.category },
     });
     setSelected(null);
+    setWantModel(null);
     navigate({ to: "/agendar" });
+  };
+
+  const handleSendModel = async () => {
+    if (!wantModel || sharing) return;
+    setSharing(true);
+    try {
+      if (hideTip) setHideShareTip(true);
+      await shareModel(wantModel, obs);
+      setWantModel(null);
+    } finally {
+      setSharing(false);
+    }
   };
 
   const shareItem = async (g: GalleryItem) => {
@@ -212,17 +238,16 @@ function Inspiracoes() {
                     </button>
                   </div>
                 </div>
-                <a
-                  href={whatsappLink(
-                    `Olá! Vi esse modelo (${g.title}) no aplicativo e gostaria de fazer essa unha. 💅✨`,
-                  )}
-                  target="_blank"
-                  rel="noreferrer"
-                  onClick={(e) => e.stopPropagation()}
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setWantModel(g);
+                  }}
                   className="mt-2.5 flex w-full items-center justify-center gap-1.5 rounded-full bg-[#25D366] py-2 text-xs font-semibold text-white shadow-sm"
                 >
                   <MessageCircle className="h-3.5 w-3.5" /> Quero esta unha
-                </a>
+                </button>
               </div>
             </div>
           );
@@ -298,16 +323,16 @@ function Inspiracoes() {
               </dl>
 
               <div className="mt-5 grid gap-2">
-                <a
-                  href={whatsappLink(
-                    `Olá! Vi esse modelo (${selected.title}) no aplicativo e gostaria de fazer essa unha. 💅✨`,
-                  )}
-                  target="_blank"
-                  rel="noreferrer"
+                <button
+                  type="button"
+                  onClick={() => {
+                    setWantModel(selected);
+                    setSelected(null);
+                  }}
                   className="flex w-full items-center justify-center gap-2 rounded-full bg-[#25D366] py-3 text-sm font-semibold text-white shadow-sm"
                 >
                   <MessageCircle className="h-4 w-4" /> Quero esta unha
-                </a>
+                </button>
                 <button
                   onClick={() => chooseAsReference(selected)}
                   className="flex w-full items-center justify-center gap-2 rounded-full bg-[#F7A8BD] py-3 text-sm font-semibold text-[#061A33] pink-glow"
@@ -355,6 +380,98 @@ function Inspiracoes() {
             alt={fullscreen.title}
             className="max-h-[92vh] max-w-[96vw] object-contain"
           />
+        </div>
+      )}
+
+      {/* "Quero esta unha" confirmation modal */}
+      {wantModel && (
+        <div
+          className="fixed inset-0 z-[70] flex items-end justify-center bg-black/80 p-0 sm:items-center sm:p-4 animate-in fade-in"
+          onClick={() => !sharing && setWantModel(null)}
+        >
+          <div
+            className="w-full max-w-md overflow-hidden rounded-t-3xl bg-white sm:rounded-3xl animate-in slide-in-from-bottom-4"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="relative">
+              <NailImage src={wantModel.imageUrl} alt={wantModel.title} />
+              <button
+                onClick={() => !sharing && setWantModel(null)}
+                aria-label="Fechar"
+                disabled={sharing}
+                className="absolute right-3 top-3 rounded-full bg-black/40 p-2 text-white backdrop-blur"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+            <div className="p-5">
+              <h2 className="font-display text-xl text-[#061A33]">
+                Você escolheu este modelo 💅
+              </h2>
+              <div className="mt-3 space-y-1 text-sm text-[#061A33]">
+                <p><span className="text-black/50">Modelo:</span> <strong>{wantModel.title}</strong></p>
+                <p><span className="text-black/50">Categoria:</span> {wantModel.category}</p>
+                <p><span className="text-black/50">Formato:</span> {wantModel.shape}</p>
+                <p><span className="text-black/50">Cor principal:</span> {wantModel.mainColor}</p>
+              </div>
+
+              <label className="mt-4 block">
+                <span className="text-[10px] uppercase tracking-widest text-black/40">
+                  Observações (opcional)
+                </span>
+                <textarea
+                  value={obs}
+                  onChange={(e) => setObs(e.target.value)}
+                  rows={3}
+                  placeholder="Ex: gostaria em cor mais clara, formato menor..."
+                  className="mt-1 w-full resize-none rounded-2xl border border-black/10 bg-white p-3 text-sm text-[#061A33] outline-none focus:border-[#F7A8BD]"
+                />
+              </label>
+
+              {showTip && (
+                <div className="mt-3 rounded-2xl bg-[#F7A8BD]/15 p-3 text-xs text-[#061A33]">
+                  <p>
+                    Na próxima tela, escolha o <strong>WhatsApp</strong> e selecione a
+                    conversa da Stefany.
+                  </p>
+                  <label className="mt-2 flex items-center gap-2 text-[11px] text-black/60">
+                    <input
+                      type="checkbox"
+                      checked={hideTip}
+                      onChange={(e) => setHideTipState(e.target.checked)}
+                      className="h-3.5 w-3.5 accent-[#F7A8BD]"
+                    />
+                    Não mostrar novamente
+                  </label>
+                </div>
+              )}
+
+              <button
+                type="button"
+                onClick={handleSendModel}
+                disabled={sharing}
+                className="mt-4 flex w-full items-center justify-center gap-2 rounded-full bg-[#25D366] py-3 text-sm font-semibold text-white shadow-sm disabled:opacity-70"
+              >
+                {sharing ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" /> Preparando...
+                  </>
+                ) : (
+                  <>
+                    <MessageCircle className="h-4 w-4" /> Enviar modelo para Stefany
+                  </>
+                )}
+              </button>
+              <button
+                type="button"
+                onClick={() => !sharing && setWantModel(null)}
+                disabled={sharing}
+                className="mt-2 w-full rounded-full py-2 text-xs text-black/60"
+              >
+                Cancelar
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>
