@@ -135,8 +135,8 @@ function AgendarPage() {
             Continuar <ArrowRight className="h-4 w-4" />
           </button>
         ) : (
-          <button onClick={send} className="flex flex-1 items-center justify-center gap-1.5 rounded-full bg-[color:var(--pink)] px-5 py-3 text-sm font-semibold text-[color:var(--navy)] pink-glow">
-            <MessageCircle className="h-4 w-4" /> Enviar para o WhatsApp
+          <button onClick={send} disabled={uploadPending} className="flex flex-1 items-center justify-center gap-1.5 rounded-full bg-[color:var(--pink)] px-5 py-3 text-sm font-semibold text-[color:var(--navy)] pink-glow disabled:opacity-60">
+            {uploadPending ? (<><Loader2 className="h-4 w-4 animate-spin" /> Preparando foto...</>) : (<><MessageCircle className="h-4 w-4" /> Enviar para o WhatsApp</>)}
           </button>
         )}
       </div>
