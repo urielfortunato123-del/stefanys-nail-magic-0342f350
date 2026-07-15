@@ -29,6 +29,7 @@ export type Database = {
           keywords: string[]
           length: string
           main_color: string
+          occasions: string[]
           secondary_color: string | null
           shape: string
           sort_order: number
@@ -51,6 +52,7 @@ export type Database = {
           keywords?: string[]
           length?: string
           main_color: string
+          occasions?: string[]
           secondary_color?: string | null
           shape: string
           sort_order?: number
@@ -73,6 +75,7 @@ export type Database = {
           keywords?: string[]
           length?: string
           main_color?: string
+          occasions?: string[]
           secondary_color?: string | null
           shape?: string
           sort_order?: number
