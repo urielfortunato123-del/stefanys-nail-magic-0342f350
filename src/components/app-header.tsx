@@ -8,7 +8,7 @@ export function AppHeader({ onMenu }: { onMenu?: () => void }) {
     <header className="sticky top-0 z-40 w-full border-b border-white/5 bg-[color:var(--navy)]/85 backdrop-blur">
       <div className="mx-auto flex max-w-2xl items-center gap-3 px-4 py-3">
         <Link to="/" className="flex min-w-0 items-center gap-2">
-          <img src={logo} alt="Logo Stefany Próspero" width={56} height={56} className="h-14 w-14 rounded-full object-contain ring-1 ring-white/10" />
+          <img src={logo} alt="Logo Stefany Próspero" width={56} height={56} className="h-14 w-14 rounded-full object-cover ring-1 ring-white/10" />
           <div className="min-w-0 leading-tight">
             <div className="truncate font-display text-base font-semibold text-white">Stefany Próspero</div>
             <div className="truncate text-[10px] uppercase tracking-[0.2em] text-[color:var(--pink)]">Nail Designer</div>
