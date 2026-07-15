@@ -382,6 +382,98 @@ function Inspiracoes() {
           />
         </div>
       )}
+
+      {/* "Quero esta unha" confirmation modal */}
+      {wantModel && (
+        <div
+          className="fixed inset-0 z-[70] flex items-end justify-center bg-black/80 p-0 sm:items-center sm:p-4 animate-in fade-in"
+          onClick={() => !sharing && setWantModel(null)}
+        >
+          <div
+            className="w-full max-w-md overflow-hidden rounded-t-3xl bg-white sm:rounded-3xl animate-in slide-in-from-bottom-4"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="relative">
+              <NailImage src={wantModel.imageUrl} alt={wantModel.title} />
+              <button
+                onClick={() => !sharing && setWantModel(null)}
+                aria-label="Fechar"
+                disabled={sharing}
+                className="absolute right-3 top-3 rounded-full bg-black/40 p-2 text-white backdrop-blur"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+            <div className="p-5">
+              <h2 className="font-display text-xl text-[#061A33]">
+                Você escolheu este modelo 💅
+              </h2>
+              <div className="mt-3 space-y-1 text-sm text-[#061A33]">
+                <p><span className="text-black/50">Modelo:</span> <strong>{wantModel.title}</strong></p>
+                <p><span className="text-black/50">Categoria:</span> {wantModel.category}</p>
+                <p><span className="text-black/50">Formato:</span> {wantModel.shape}</p>
+                <p><span className="text-black/50">Cor principal:</span> {wantModel.mainColor}</p>
+              </div>
+
+              <label className="mt-4 block">
+                <span className="text-[10px] uppercase tracking-widest text-black/40">
+                  Observações (opcional)
+                </span>
+                <textarea
+                  value={obs}
+                  onChange={(e) => setObs(e.target.value)}
+                  rows={3}
+                  placeholder="Ex: gostaria em cor mais clara, formato menor..."
+                  className="mt-1 w-full resize-none rounded-2xl border border-black/10 bg-white p-3 text-sm text-[#061A33] outline-none focus:border-[#F7A8BD]"
+                />
+              </label>
+
+              {showTip && (
+                <div className="mt-3 rounded-2xl bg-[#F7A8BD]/15 p-3 text-xs text-[#061A33]">
+                  <p>
+                    Na próxima tela, escolha o <strong>WhatsApp</strong> e selecione a
+                    conversa da Stefany.
+                  </p>
+                  <label className="mt-2 flex items-center gap-2 text-[11px] text-black/60">
+                    <input
+                      type="checkbox"
+                      checked={hideTip}
+                      onChange={(e) => setHideTipState(e.target.checked)}
+                      className="h-3.5 w-3.5 accent-[#F7A8BD]"
+                    />
+                    Não mostrar novamente
+                  </label>
+                </div>
+              )}
+
+              <button
+                type="button"
+                onClick={handleSendModel}
+                disabled={sharing}
+                className="mt-4 flex w-full items-center justify-center gap-2 rounded-full bg-[#25D366] py-3 text-sm font-semibold text-white shadow-sm disabled:opacity-70"
+              >
+                {sharing ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" /> Preparando...
+                  </>
+                ) : (
+                  <>
+                    <MessageCircle className="h-4 w-4" /> Enviar modelo para Stefany
+                  </>
+                )}
+              </button>
+              <button
+                type="button"
+                onClick={() => !sharing && setWantModel(null)}
+                disabled={sharing}
+                className="mt-2 w-full rounded-full py-2 text-xs text-black/60"
+              >
+                Cancelar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
