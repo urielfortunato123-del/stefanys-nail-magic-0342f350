@@ -19,6 +19,13 @@ export interface GalleryItem {
   duration: string;
   durability: string;
   featured?: boolean;
+  // opcionais (populados via banco; itens estáticos ficam com defaults)
+  length?: string;
+  secondaryColor?: string | null;
+  style?: string;
+  tags?: string[];
+  occasions?: string[];
+  description?: string;
 }
 
 export const galleryCategories = [
