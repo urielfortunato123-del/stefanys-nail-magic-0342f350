@@ -2,11 +2,11 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { X, Sparkles, ImageOff, Heart, Share2, Maximize2, MessageCircle, Loader2 } from "lucide-react";
 import {
-  gallery,
   galleryCategories,
   categoryDescriptions,
   type GalleryItem,
 } from "@/data/gallery";
+import { loadGallery } from "@/lib/gallery-source";
 import { useBooking } from "@/lib/booking-context";
 import { shareModel, shouldShowShareTip, setHideShareTip } from "@/lib/share-model";
 
@@ -93,9 +93,20 @@ function Inspiracoes() {
   const [sharing, setSharing] = useState(false);
   const [hideTip, setHideTipState] = useState(false);
   const [showTip, setShowTip] = useState(false);
+  const [gallery, setGallery] = useState<GalleryItem[]>([]);
   const { favs, toggle } = useFavorites();
   const { update } = useBooking();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    let ok = true;
+    loadGallery().then((g) => {
+      if (ok) setGallery(g);
+    });
+    return () => {
+      ok = false;
+    };
+  }, []);
 
   useEffect(() => {
     if (wantModel) {
@@ -105,17 +116,17 @@ function Inspiracoes() {
     }
   }, [wantModel]);
 
-  const shapes = useMemo(
-    () => ["Todos", ...Array.from(new Set(gallery.map((g) => g.shape)))],
-    [],
+  const shapes = useMemo<string[]>(
+    () => ["Todos", ...Array.from(new Set(gallery.map((g) => g.shape as string)))],
+    [gallery],
   );
-  const colors = useMemo(
+  const colors = useMemo<string[]>(
     () => ["Todas", ...Array.from(new Set(gallery.map((g) => g.mainColor)))],
-    [],
+    [gallery],
   );
-  const finishes = useMemo(
-    () => ["Todos", ...Array.from(new Set(gallery.map((g) => g.finish)))],
-    [],
+  const finishes = useMemo<string[]>(
+    () => ["Todos", ...Array.from(new Set(gallery.map((g) => g.finish as string)))],
+    [gallery],
   );
 
   const filtered = useMemo(
@@ -127,7 +138,7 @@ function Inspiracoes() {
           (colorFilter === "Todas" || g.mainColor === colorFilter) &&
           (finishFilter === "Todos" || g.finish === finishFilter),
       ),
-    [filter, shapeFilter, colorFilter, finishFilter],
+    [gallery, filter, shapeFilter, colorFilter, finishFilter],
   );
 
   const activeFilters =

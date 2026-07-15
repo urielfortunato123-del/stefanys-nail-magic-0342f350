@@ -19,6 +19,7 @@ import { Route as AreaAtendidaRouteImport } from './routes/area-atendida'
 import { Route as AgendarRouteImport } from './routes/agendar'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AgendarSucessoRouteImport } from './routes/agendar.sucesso'
+import { Route as AdminGaleriaRouteImport } from './routes/admin.galeria'
 import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
 import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]/list-tools'
 import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
@@ -73,6 +74,11 @@ const AgendarSucessoRoute = AgendarSucessoRouteImport.update({
   path: '/sucesso',
   getParentRoute: () => AgendarRoute,
 } as any)
+const AdminGaleriaRoute = AdminGaleriaRouteImport.update({
+  id: '/admin/galeria',
+  path: '/admin/galeria',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const Char91DotwellKnownChar93OauthProtectedResourceRoute =
   Char91DotwellKnownChar93OauthProtectedResourceRouteImport.update({
     id: '/.well-known/oauth-protected-resource',
@@ -104,6 +110,7 @@ export interface FileRoutesByFullPath {
   '/sobre': typeof SobreRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  '/admin/galeria': typeof AdminGaleriaRoute
   '/agendar/sucesso': typeof AgendarSucessoRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
 }
@@ -119,6 +126,7 @@ export interface FileRoutesByTo {
   '/sobre': typeof SobreRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  '/admin/galeria': typeof AdminGaleriaRoute
   '/agendar/sucesso': typeof AgendarSucessoRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
 }
@@ -135,6 +143,7 @@ export interface FileRoutesById {
   '/sobre': typeof SobreRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  '/admin/galeria': typeof AdminGaleriaRoute
   '/agendar/sucesso': typeof AgendarSucessoRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
 }
@@ -152,6 +161,7 @@ export interface FileRouteTypes {
     | '/sobre'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
+    | '/admin/galeria'
     | '/agendar/sucesso'
     | '/.mcp/invoke-tool/$tool'
   fileRoutesByTo: FileRoutesByTo
@@ -167,6 +177,7 @@ export interface FileRouteTypes {
     | '/sobre'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
+    | '/admin/galeria'
     | '/agendar/sucesso'
     | '/.mcp/invoke-tool/$tool'
   id:
@@ -182,6 +193,7 @@ export interface FileRouteTypes {
     | '/sobre'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
+    | '/admin/galeria'
     | '/agendar/sucesso'
     | '/.mcp/invoke-tool/$tool'
   fileRoutesById: FileRoutesById
@@ -198,6 +210,7 @@ export interface RootRouteChildren {
   SobreRoute: typeof SobreRoute
   Char91DotmcpChar93ListToolsRoute: typeof Char91DotmcpChar93ListToolsRoute
   Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  AdminGaleriaRoute: typeof AdminGaleriaRoute
   Char91DotmcpChar93InvokeToolToolRoute: typeof Char91DotmcpChar93InvokeToolToolRoute
 }
 
@@ -273,6 +286,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AgendarSucessoRouteImport
       parentRoute: typeof AgendarRoute
     }
+    '/admin/galeria': {
+      id: '/admin/galeria'
+      path: '/admin/galeria'
+      fullPath: '/admin/galeria'
+      preLoaderRoute: typeof AdminGaleriaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/.well-known/oauth-protected-resource': {
       id: '/.well-known/oauth-protected-resource'
       path: '/.well-known/oauth-protected-resource'
@@ -321,6 +341,7 @@ const rootRouteChildren: RootRouteChildren = {
   Char91DotmcpChar93ListToolsRoute: Char91DotmcpChar93ListToolsRoute,
   Char91DotwellKnownChar93OauthProtectedResourceRoute:
     Char91DotwellKnownChar93OauthProtectedResourceRoute,
+  AdminGaleriaRoute: AdminGaleriaRoute,
   Char91DotmcpChar93InvokeToolToolRoute: Char91DotmcpChar93InvokeToolToolRoute,
 }
 export const routeTree = rootRouteImport

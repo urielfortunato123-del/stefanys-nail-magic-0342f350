@@ -14,7 +14,60 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      nail_models: {
+        Row: {
+          category: string
+          created_at: string
+          durability: string
+          duration: string
+          featured: boolean
+          finish: string
+          id: string
+          image_url: string
+          is_active: boolean
+          main_color: string
+          shape: string
+          sort_order: number
+          storage_path: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          durability?: string
+          duration?: string
+          featured?: boolean
+          finish: string
+          id?: string
+          image_url: string
+          is_active?: boolean
+          main_color: string
+          shape: string
+          sort_order?: number
+          storage_path?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          durability?: string
+          duration?: string
+          featured?: boolean
+          finish?: string
+          id?: string
+          image_url?: string
+          is_active?: boolean
+          main_color?: string
+          shape?: string
+          sort_order?: number
+          storage_path?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
