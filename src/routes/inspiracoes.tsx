@@ -323,16 +323,16 @@ function Inspiracoes() {
               </dl>
 
               <div className="mt-5 grid gap-2">
-                <a
-                  href={whatsappLink(
-                    `Olá! Vi esse modelo (${selected.title}) no aplicativo e gostaria de fazer essa unha. 💅✨`,
-                  )}
-                  target="_blank"
-                  rel="noreferrer"
+                <button
+                  type="button"
+                  onClick={() => {
+                    setWantModel(selected);
+                    setSelected(null);
+                  }}
                   className="flex w-full items-center justify-center gap-2 rounded-full bg-[#25D366] py-3 text-sm font-semibold text-white shadow-sm"
                 >
                   <MessageCircle className="h-4 w-4" /> Quero esta unha
-                </a>
+                </button>
                 <button
                   onClick={() => chooseAsReference(selected)}
                   className="flex w-full items-center justify-center gap-2 rounded-full bg-[#F7A8BD] py-3 text-sm font-semibold text-[#061A33] pink-glow"
