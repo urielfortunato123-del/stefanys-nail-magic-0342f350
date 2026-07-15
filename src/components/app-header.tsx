@@ -9,7 +9,7 @@ export function AppHeader({ onMenu }: { onMenu?: () => void }) {
       <div className="mx-auto flex max-w-2xl items-center gap-3 px-4 py-3">
         <Link to="/" className="flex min-w-0 items-center gap-2">
           <div className="h-14 w-14 overflow-hidden rounded-full">
-            <img src={logo} alt="Logo Stefany Próspero" width={56} height={56} className="h-full w-full scale-105 object-cover" />
+            <img src={logo} alt="Logo Stefany Próspero" width={56} height={56} className="h-full w-full scale-[1.35] object-cover" />
           </div>
           <div className="min-w-0 leading-tight">
             <div className="truncate font-display text-base font-semibold text-white">Stefany Próspero</div>
