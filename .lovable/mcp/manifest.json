@@ -62,13 +62,12 @@
               "type": "string",
               "enum": [
                 "Todas",
-                "Delicadas",
                 "Francesinha",
+                "Decoradas",
                 "Coloridas",
-                "Rosa",
-                "Preto",
-                "Glitter",
-                "Artísticas"
+                "Luxo",
+                "Minimalistas",
+                "Nail Art"
               ]
             }
           }
