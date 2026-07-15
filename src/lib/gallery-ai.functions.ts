@@ -2,19 +2,31 @@ import { createServerFn } from "@tanstack/react-start";
 
 type AnalyzeInput = { imageUrl: string };
 
-type AnalyzeResult = {
+export type AnalyzeResult = {
   title: string;
   category: string;
   shape: string;
+  length: string;
   mainColor: string;
+  secondaryColor: string;
   finish: string;
+  style: string;
+  keywords: string[];
+  description: string;
   duration: string;
   durability: string;
 };
 
 const CATEGORIES = ["Francesinha", "Decoradas", "Coloridas", "Luxo", "Minimalistas", "Nail Art"];
 const SHAPES = ["Almond", "Bailarina", "Stiletto", "Quadrada"];
+const LENGTHS = ["Curto", "Médio", "Longo", "Extra longo"];
 const FINISHES = ["Glitter", "Encapsulado", "Pedrarias", "3D", "Pintura Artística", "Francesinha"];
+const STYLES = ["Minimalista", "Luxo", "Decorada", "Nail Art", "Francesinha", "Colorida"];
+const COLORS = [
+  "Nude", "Branco", "Preto", "Rosa", "Rosa claro", "Rosa pink", "Vermelho", "Vinho",
+  "Nude com cristais", "Dourado", "Prata", "Azul", "Azul marinho", "Verde", "Roxo",
+  "Marrom", "Bege", "Glitter", "Cristal", "Pérola", "Multicolorido",
+];
 
 export const analyzeNailImage = createServerFn({ method: "POST" })
   .inputValidator((input: unknown): AnalyzeInput => {
@@ -26,15 +38,24 @@ export const analyzeNailImage = createServerFn({ method: "POST" })
     const key = process.env.LOVABLE_API_KEY;
     if (!key) throw new Error("LOVABLE_API_KEY não configurado");
 
-    const systemPrompt = `Você analisa fotos de unhas trabalhadas pela nail designer Stefany e devolve os metadados em português.
-Categorias válidas: ${CATEGORIES.join(", ")}.
-Formatos válidos: ${SHAPES.join(", ")}.
-Acabamentos válidos: ${FINISHES.join(", ")}.
-Título: nome curto e comercial (máx 40 caracteres).
-Cor principal: descrição curta (ex: "Nude com cristais", "Vermelho cereja").
-Tempo médio: uma string como "2h", "2h30", "3h".
-Durabilidade: uma string como "até 20 dias", "3 semanas".
-Escolha exatamente um valor de cada lista fechada. Nunca invente categorias fora das listas.`;
+    const systemPrompt = `Você analisa fotos de unhas trabalhadas pela nail designer Stefany e devolve metadados em português brasileiro.
+
+Listas fechadas (escolha exatamente UM valor de cada):
+- Categoria: ${CATEGORIES.join(", ")}
+- Formato: ${SHAPES.join(", ")}
+- Comprimento: ${LENGTHS.join(", ")}
+- Acabamento: ${FINISHES.join(", ")}
+- Estilo: ${STYLES.join(", ")}
+- Cores (para cor principal e secundária): ${COLORS.join(", ")}
+
+Regras:
+- Título: nome curto e comercial (máx 40 caracteres).
+- Cor secundária: use "" (string vazia) quando a unha tem uma cor dominante só.
+- Palavras-chave: 3 a 6 termos curtos em minúsculo para busca (ex: "francesinha", "casamento", "delicada", "cristais").
+- Descrição: 1 a 2 frases descrevendo o modelo de forma comercial.
+- Tempo médio: "1h30", "2h", "2h30", "3h".
+- Durabilidade: "2 semanas", "3 semanas", "até 20 dias", "até 25 dias".
+Nunca invente valores fora das listas fechadas.`;
 
     const body = {
       model: "google/gemini-2.5-flash",
@@ -43,7 +64,7 @@ Escolha exatamente um valor de cada lista fechada. Nunca invente categorias fora
         {
           role: "user",
           content: [
-            { type: "text", text: "Analise esta unha e devolva os metadados." },
+            { type: "text", text: "Analise esta unha e preencha os metadados." },
             { type: "image_url", image_url: { url: data.imageUrl } },
           ],
         },
@@ -60,12 +81,20 @@ Escolha exatamente um valor de cada lista fechada. Nunca invente categorias fora
                 title: { type: "string" },
                 category: { type: "string", enum: CATEGORIES },
                 shape: { type: "string", enum: SHAPES },
-                mainColor: { type: "string" },
+                length: { type: "string", enum: LENGTHS },
+                mainColor: { type: "string", enum: COLORS },
+                secondaryColor: { type: "string" },
                 finish: { type: "string", enum: FINISHES },
+                style: { type: "string", enum: STYLES },
+                keywords: { type: "array", items: { type: "string" } },
+                description: { type: "string" },
                 duration: { type: "string" },
                 durability: { type: "string" },
               },
-              required: ["title", "category", "shape", "mainColor", "finish", "duration", "durability"],
+              required: [
+                "title", "category", "shape", "length", "mainColor", "secondaryColor",
+                "finish", "style", "keywords", "description", "duration", "durability",
+              ],
               additionalProperties: false,
             },
           },

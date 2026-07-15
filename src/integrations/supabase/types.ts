@@ -18,6 +18,7 @@ export type Database = {
         Row: {
           category: string
           created_at: string
+          description: string
           durability: string
           duration: string
           featured: boolean
@@ -25,16 +26,21 @@ export type Database = {
           id: string
           image_url: string
           is_active: boolean
+          keywords: string[]
+          length: string
           main_color: string
+          secondary_color: string | null
           shape: string
           sort_order: number
           storage_path: string | null
+          style: string
           title: string
           updated_at: string
         }
         Insert: {
           category: string
           created_at?: string
+          description?: string
           durability?: string
           duration?: string
           featured?: boolean
@@ -42,16 +48,21 @@ export type Database = {
           id?: string
           image_url: string
           is_active?: boolean
+          keywords?: string[]
+          length?: string
           main_color: string
+          secondary_color?: string | null
           shape: string
           sort_order?: number
           storage_path?: string | null
+          style?: string
           title: string
           updated_at?: string
         }
         Update: {
           category?: string
           created_at?: string
+          description?: string
           durability?: string
           duration?: string
           featured?: boolean
@@ -59,10 +70,14 @@ export type Database = {
           id?: string
           image_url?: string
           is_active?: boolean
+          keywords?: string[]
+          length?: string
           main_color?: string
+          secondary_color?: string | null
           shape?: string
           sort_order?: number
           storage_path?: string | null
+          style?: string
           title?: string
           updated_at?: string
         }
