@@ -37,7 +37,7 @@ function Home() {
         <div className="absolute -right-16 -top-16 h-56 w-56 rounded-full bg-[color:var(--pink)]/20 blur-3xl" aria-hidden />
         <div className="absolute -bottom-24 -left-16 h-56 w-56 rounded-full bg-[color:var(--gold)]/10 blur-3xl" aria-hidden />
         <div className="mx-auto mb-4 h-52 w-52 overflow-hidden rounded-full sm:h-60 sm:w-60">
-          <img src={logo} alt="Stefany Próspero" width={208} height={208} className="h-full w-full scale-105 object-cover" />
+          <img src={logo} alt="Stefany Próspero" width={208} height={208} className="h-full w-full scale-[1.35] object-cover" />
         </div>
         <p className="text-[10px] uppercase tracking-[0.35em] text-[color:var(--pink)]">Nail Designer</p>
         <h1 className="mt-2 font-display text-4xl font-semibold leading-tight">

@@ -19,7 +19,7 @@ function Sobre() {
     <div className="space-y-6">
       <div className="glass-card overflow-hidden rounded-3xl p-6 text-center">
         <div className="mx-auto h-48 w-48 overflow-hidden rounded-full">
-          <img src={logo} alt="Stefany Próspero" width={192} height={192} className="h-full w-full scale-105 object-cover" />
+          <img src={logo} alt="Stefany Próspero" width={192} height={192} className="h-full w-full scale-[1.35] object-cover" />
         </div>
         <p className="mt-3 text-[10px] uppercase tracking-[0.3em] text-[color:var(--pink)]">Nail Designer</p>
         <h1 className="mt-1 font-display text-3xl text-white">Stefany Próspero</h1>
