@@ -2,11 +2,11 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { X, Sparkles, ImageOff, Heart, Share2, Maximize2, MessageCircle, Loader2 } from "lucide-react";
 import {
-  gallery,
   galleryCategories,
   categoryDescriptions,
   type GalleryItem,
 } from "@/data/gallery";
+import { loadGallery } from "@/lib/gallery-source";
 import { useBooking } from "@/lib/booking-context";
 import { shareModel, shouldShowShareTip, setHideShareTip } from "@/lib/share-model";
 
