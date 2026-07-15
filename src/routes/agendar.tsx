@@ -80,9 +80,15 @@ function AgendarPage() {
 
   const progress = ((step + 1) / STEPS.length) * 100;
 
+  const uploadPending = !!data.referenceImage && !data.referenceImageUrl;
+
   const send = () => {
     const err = validate(9);
     if (err) { setError(err); return; }
+    if (uploadPending) {
+      setError("Aguarde, estamos preparando sua foto para enviar à Stefany.");
+      return;
+    }
     if (data.saveData) persistSavedClient(data);
     const message = buildWhatsAppMessage(data);
     window.open(whatsappLink(message), "_blank");
