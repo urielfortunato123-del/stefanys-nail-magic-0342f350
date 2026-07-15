@@ -1,10 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
-import { Loader2, Sparkles, Trash2, Upload, X, Eye, EyeOff, AlertTriangle } from "lucide-react";
+import {
+  Loader2, Sparkles, Trash2, Upload, X, Eye, EyeOff, AlertTriangle, Copy,
+} from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { analyzeNailImage } from "@/lib/gallery-ai.functions";
-import type { DbNailModel } from "@/lib/gallery-source";
 
 export const Route = createFileRoute("/admin/galeria")({
   head: () => ({
@@ -15,12 +16,42 @@ export const Route = createFileRoute("/admin/galeria")({
 
 const CATEGORIES = ["Francesinha", "Decoradas", "Coloridas", "Luxo", "Minimalistas", "Nail Art"];
 const SHAPES = ["Almond", "Bailarina", "Stiletto", "Quadrada"];
+const LENGTHS = ["Curto", "Médio", "Longo", "Extra longo"];
 const FINISHES = ["Glitter", "Encapsulado", "Pedrarias", "3D", "Pintura Artística", "Francesinha"];
-const SIGNED_URL_TTL = 60 * 60 * 24 * 365; // 1 ano
+const STYLES = ["Minimalista", "Luxo", "Decorada", "Nail Art", "Francesinha", "Colorida"];
+const COLORS = [
+  "Nude", "Branco", "Preto", "Rosa", "Rosa claro", "Rosa pink", "Vermelho", "Vinho",
+  "Nude com cristais", "Dourado", "Prata", "Azul", "Azul marinho", "Verde", "Roxo",
+  "Marrom", "Bege", "Glitter", "Cristal", "Pérola", "Multicolorido",
+];
+const DURATIONS = ["1h", "1h30", "2h", "2h30", "3h", "3h30"];
+const DURABILITIES = ["2 semanas", "3 semanas", "até 20 dias", "até 25 dias", "1 mês"];
+
+const SIGNED_URL_TTL = 60 * 60 * 24 * 365;
+
+type DbRow = {
+  id: string;
+  title: string;
+  category: string;
+  shape: string;
+  length: string;
+  main_color: string;
+  secondary_color: string | null;
+  finish: string;
+  style: string;
+  keywords: string[];
+  description: string;
+  image_url: string;
+  storage_path: string | null;
+  duration: string;
+  durability: string;
+  featured: boolean;
+  is_active: boolean;
+};
 
 type Draft = {
   localId: string;
-  file: File;
+  file?: File; // undefined when duplicated (reuses image URL)
   previewUrl: string;
   uploading: boolean;
   uploadedPath?: string;
@@ -28,17 +59,23 @@ type Draft = {
   analyzing: boolean;
   saving: boolean;
   error?: string;
+  // form fields
   title: string;
   category: string;
   shape: string;
+  length: string;
   mainColor: string;
+  secondaryColor: string;
   finish: string;
+  style: string;
+  keywords: string;
+  description: string;
   duration: string;
   durability: string;
   featured: boolean;
 };
 
-function emptyDraft(file: File): Draft {
+function newFileDraft(file: File): Draft {
   const base = file.name.replace(/\.[^.]+$/, "").replace(/[-_]+/g, " ");
   return {
     localId: crypto.randomUUID(),
@@ -50,17 +87,47 @@ function emptyDraft(file: File): Draft {
     title: base.slice(0, 40),
     category: "Decoradas",
     shape: "Almond",
-    mainColor: "",
+    length: "Médio",
+    mainColor: "Nude",
+    secondaryColor: "",
     finish: "Pintura Artística",
+    style: "Decorada",
+    keywords: "",
+    description: "",
     duration: "2h",
     durability: "3 semanas",
     featured: false,
   };
 }
 
+function duplicateFromRow(row: DbRow): Draft {
+  return {
+    localId: crypto.randomUUID(),
+    previewUrl: row.image_url,
+    uploading: false,
+    uploadedPath: row.storage_path ?? undefined,
+    imageUrl: row.image_url,
+    analyzing: false,
+    saving: false,
+    title: `${row.title} (cópia)`,
+    category: row.category,
+    shape: row.shape,
+    length: row.length,
+    mainColor: row.main_color,
+    secondaryColor: row.secondary_color ?? "",
+    finish: row.finish,
+    style: row.style,
+    keywords: (row.keywords ?? []).join(", "),
+    description: row.description,
+    duration: row.duration,
+    durability: row.durability,
+    featured: false,
+  };
+}
+
 function AdminGaleria() {
   const [drafts, setDrafts] = useState<Draft[]>([]);
-  const [items, setItems] = useState<DbNailModel[]>([]);
+  const [items, setItems] = useState<DbRow[]>([]);
   const [loading, setLoading] = useState(true);
   const analyzeFn = useServerFn(analyzeNailImage);
 
@@ -70,7 +137,7 @@ function AdminGaleria() {
       .from("nail_models")
       .select("*")
       .order("created_at", { ascending: false });
-    setItems((data as DbNailModel[]) ?? []);
+    setItems((data as DbRow[]) ?? []);
     setLoading(false);
   };
 
@@ -79,6 +146,7 @@ function AdminGaleria() {
   }, []);
 
   const uploadDraft = async (draft: Draft) => {
+    if (!draft.file) return;
     const ext = draft.file.name.split(".").pop()?.toLowerCase() || "jpg";
     const path = `${new Date().getFullYear()}/${new Date().getMonth() + 1}/${crypto.randomUUID()}.${ext}`;
     const { error } = await supabase.storage.from("galeria").upload(path, draft.file, {
@@ -105,13 +173,26 @@ function AdminGaleria() {
     if (!files) return;
     const newDrafts = Array.from(files)
       .filter((f) => f.type.startsWith("image/"))
-      .map(emptyDraft);
+      .map(newFileDraft);
     setDrafts((d) => [...newDrafts, ...d]);
     newDrafts.forEach((d) => void uploadDraft(d));
   };
 
   const patch = (localId: string, changes: Partial<Draft>) =>
     setDrafts((ds) => ds.map((d) => (d.localId === localId ? { ...d, ...changes } : d)));
+
+  const replaceImage = (localId: string, file: File) => {
+    const previewUrl = URL.createObjectURL(file);
+    setDrafts((ds) =>
+      ds.map((d) =>
+        d.localId === localId
+          ? { ...d, file, previewUrl, uploading: true, uploadedPath: undefined, imageUrl: undefined, error: undefined }
+          : d,
+      ),
+    );
+    const target: Draft = { ...drafts.find((x) => x.localId === localId)!, file, previewUrl };
+    void uploadDraft(target);
+  };
 
   const analyzeDraft = async (d: Draft) => {
     if (!d.imageUrl) return;
@@ -123,8 +204,13 @@ function AdminGaleria() {
         title: res.title,
         category: res.category,
         shape: res.shape,
+        length: res.length,
         mainColor: res.mainColor,
+        secondaryColor: res.secondaryColor || "",
         finish: res.finish,
+        style: res.style,
+        keywords: (res.keywords ?? []).join(", "),
+        description: res.description,
         duration: res.duration,
         durability: res.durability,
       });
@@ -135,20 +221,32 @@ function AdminGaleria() {
   };
 
   const saveDraft = async (d: Draft) => {
-    if (!d.imageUrl || !d.uploadedPath) return;
-    if (!d.title.trim() || !d.mainColor.trim()) {
-      patch(d.localId, { error: "Preencha título e cor principal" });
+    if (!d.imageUrl) {
+      patch(d.localId, { error: "Envie a foto primeiro" });
+      return;
+    }
+    if (!d.title.trim()) {
+      patch(d.localId, { error: "Preencha o nome do modelo" });
       return;
     }
     patch(d.localId, { saving: true, error: undefined });
+    const keywords = d.keywords
+      .split(",")
+      .map((k) => k.trim().toLowerCase())
+      .filter(Boolean);
     const { error } = await supabase.from("nail_models").insert({
       title: d.title.trim(),
       category: d.category,
       shape: d.shape,
-      main_color: d.mainColor.trim(),
+      length: d.length,
+      main_color: d.mainColor,
+      secondary_color: d.secondaryColor || null,
       finish: d.finish,
+      style: d.style,
+      keywords,
+      description: d.description.trim(),
       image_url: d.imageUrl,
-      storage_path: d.uploadedPath,
+      storage_path: d.uploadedPath ?? null,
       duration: d.duration,
       durability: d.durability,
       featured: d.featured,
@@ -158,23 +256,29 @@ function AdminGaleria() {
       patch(d.localId, { saving: false, error: error.message });
       return;
     }
-    URL.revokeObjectURL(d.previewUrl);
+    if (d.file) URL.revokeObjectURL(d.previewUrl);
     setDrafts((ds) => ds.filter((x) => x.localId !== d.localId));
     void loadItems();
   };
 
   const removeDraft = (d: Draft) => {
-    URL.revokeObjectURL(d.previewUrl);
-    if (d.uploadedPath) void supabase.storage.from("galeria").remove([d.uploadedPath]);
+    if (d.file) URL.revokeObjectURL(d.previewUrl);
+    // Only remove uploaded file if this draft owns it (not a duplicate of an existing row)
+    if (d.file && d.uploadedPath) void supabase.storage.from("galeria").remove([d.uploadedPath]);
     setDrafts((ds) => ds.filter((x) => x.localId !== d.localId));
   };
 
-  const toggleActive = async (row: DbNailModel) => {
+  const duplicateItem = (row: DbRow) => {
+    setDrafts((ds) => [duplicateFromRow(row), ...ds]);
+    if (typeof window !== "undefined") window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const toggleActive = async (row: DbRow) => {
     await supabase.from("nail_models").update({ is_active: !row.is_active }).eq("id", row.id);
     void loadItems();
   };
 
-  const deleteItem = async (row: DbNailModel) => {
+  const deleteItem = async (row: DbRow) => {
     if (!confirm(`Excluir "${row.title}"?`)) return;
     await supabase.from("nail_models").delete().eq("id", row.id);
     void loadItems();
@@ -186,7 +290,7 @@ function AdminGaleria() {
         <p className="text-[10px] uppercase tracking-[0.3em] text-[color:var(--pink)]">Admin</p>
         <h1 className="font-display text-3xl text-white">Galeria</h1>
         <p className="mt-1 text-sm text-white/60">
-          Envie fotos novas, preencha os dados (ou peça pra IA sugerir) e salve.
+          Envie fotos, revise os campos (ou peça sugestão à IA) e salve.
         </p>
       </div>
 
@@ -215,7 +319,9 @@ function AdminGaleria() {
 
       {drafts.length > 0 && (
         <div className="space-y-3">
-          <h2 className="px-1 text-sm font-semibold text-white/80">Novas fotos ({drafts.length})</h2>
+          <h2 className="px-1 text-sm font-semibold text-white/80">
+            Novos modelos ({drafts.length})
+          </h2>
           {drafts.map((d) => (
             <DraftCard
               key={d.localId}
@@ -224,6 +330,7 @@ function AdminGaleria() {
               onAnalyze={() => analyzeDraft(d)}
               onSave={() => saveDraft(d)}
               onRemove={() => removeDraft(d)}
+              onReplaceImage={(file) => replaceImage(d.localId, file)}
             />
           ))}
         </div>
@@ -239,8 +346,8 @@ function AdminGaleria() {
           </div>
         ) : items.length === 0 ? (
           <p className="text-sm text-white/50">
-            Nada no banco ainda. A galeria pública está usando as fotos originais até você salvar
-            a primeira aqui.
+            Nada no banco ainda. A galeria pública está usando as fotos originais até você
+            salvar a primeira aqui.
           </p>
         ) : (
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
@@ -260,7 +367,7 @@ function AdminGaleria() {
                 <div className="p-2.5">
                   <p className="truncate text-xs font-semibold text-white">{row.title}</p>
                   <p className="truncate text-[10px] text-white/50">
-                    {row.category} · {row.shape}
+                    {row.category} · {row.shape} · {row.length}
                   </p>
                   <div className="mt-2 flex gap-1">
                     <button
@@ -278,9 +385,18 @@ function AdminGaleria() {
                       )}
                     </button>
                     <button
+                      onClick={() => duplicateItem(row)}
+                      className="rounded-full bg-[color:var(--pink)]/20 p-1.5 text-[color:var(--pink)] hover:bg-[color:var(--pink)]/30"
+                      aria-label="Duplicar"
+                      title="Duplicar modelo"
+                    >
+                      <Copy className="h-3 w-3" />
+                    </button>
+                    <button
                       onClick={() => deleteItem(row)}
                       className="rounded-full bg-red-500/20 p-1.5 text-red-200 hover:bg-red-500/30"
                       aria-label="Excluir"
+                      title="Excluir"
                     >
                       <Trash2 className="h-3 w-3" />
                     </button>
@@ -296,17 +412,14 @@ function AdminGaleria() {
 }
 
 function DraftCard({
-  d,
-  onChange,
-  onAnalyze,
-  onSave,
-  onRemove,
+  d, onChange, onAnalyze, onSave, onRemove, onReplaceImage,
 }: {
   d: Draft;
   onChange: (c: Partial<Draft>) => void;
   onAnalyze: () => void;
   onSave: () => void;
   onRemove: () => void;
+  onReplaceImage: (file: File) => void;
 }) {
   return (
     <div className="overflow-hidden rounded-3xl border border-white/10 bg-white/5">
@@ -325,47 +438,78 @@ function DraftCard({
           >
             <X className="h-3.5 w-3.5" />
           </button>
+          <label className="mt-2 flex cursor-pointer items-center justify-center gap-1 rounded-full bg-white/10 py-1.5 text-[10px] text-white hover:bg-white/20">
+            <Upload className="h-3 w-3" /> Trocar foto
+            <input
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={(e) => {
+                const f = e.target.files?.[0];
+                if (f) onReplaceImage(f);
+                e.target.value = "";
+              }}
+            />
+          </label>
         </div>
 
         <div className="flex-1 space-y-2">
           <div className="grid grid-cols-2 gap-2">
-            <Field label="Título" className="col-span-2">
+            <Field label="Nome do modelo" className="col-span-2">
               <input
                 value={d.title}
                 onChange={(e) => onChange({ title: e.target.value })}
-                className="w-full rounded-xl border border-white/15 bg-white/5 px-3 py-2 text-sm text-white outline-none focus:border-[color:var(--pink)]"
+                className={inputCls}
                 placeholder="Ex: Francesinha rosa"
               />
             </Field>
             <Field label="Categoria">
               <Select value={d.category} onChange={(v) => onChange({ category: v })} options={CATEGORIES} />
             </Field>
+            <Field label="Estilo">
+              <Select value={d.style} onChange={(v) => onChange({ style: v })} options={STYLES} />
+            </Field>
             <Field label="Formato">
               <Select value={d.shape} onChange={(v) => onChange({ shape: v })} options={SHAPES} />
             </Field>
-            <Field label="Cor principal" className="col-span-2">
-              <input
-                value={d.mainColor}
-                onChange={(e) => onChange({ mainColor: e.target.value })}
-                className="w-full rounded-xl border border-white/15 bg-white/5 px-3 py-2 text-sm text-white outline-none focus:border-[color:var(--pink)]"
-                placeholder="Ex: Nude com cristais"
+            <Field label="Comprimento">
+              <Select value={d.length} onChange={(v) => onChange({ length: v })} options={LENGTHS} />
+            </Field>
+            <Field label="Cor principal">
+              <Select value={d.mainColor} onChange={(v) => onChange({ mainColor: v })} options={COLORS} />
+            </Field>
+            <Field label="Cor secundária">
+              <Select
+                value={d.secondaryColor}
+                onChange={(v) => onChange({ secondaryColor: v })}
+                options={["", ...COLORS]}
+                labelFor={(v) => (v === "" ? "— nenhuma —" : v)}
               />
             </Field>
             <Field label="Acabamento" className="col-span-2">
               <Select value={d.finish} onChange={(v) => onChange({ finish: v })} options={FINISHES} />
             </Field>
             <Field label="Tempo médio">
-              <input
-                value={d.duration}
-                onChange={(e) => onChange({ duration: e.target.value })}
-                className="w-full rounded-xl border border-white/15 bg-white/5 px-3 py-2 text-sm text-white outline-none focus:border-[color:var(--pink)]"
-              />
+              <Select value={d.duration} onChange={(v) => onChange({ duration: v })} options={DURATIONS} />
             </Field>
             <Field label="Durabilidade">
+              <Select value={d.durability} onChange={(v) => onChange({ durability: v })} options={DURABILITIES} />
+            </Field>
+            <Field label="Palavras-chave (separadas por vírgula)" className="col-span-2">
               <input
-                value={d.durability}
-                onChange={(e) => onChange({ durability: e.target.value })}
-                className="w-full rounded-xl border border-white/15 bg-white/5 px-3 py-2 text-sm text-white outline-none focus:border-[color:var(--pink)]"
+                value={d.keywords}
+                onChange={(e) => onChange({ keywords: e.target.value })}
+                className={inputCls}
+                placeholder="ex: francesinha, casamento, delicada"
+              />
+            </Field>
+            <Field label="Descrição" className="col-span-2">
+              <textarea
+                value={d.description}
+                onChange={(e) => onChange({ description: e.target.value })}
+                rows={2}
+                className={inputCls + " resize-none"}
+                placeholder="Frase curta que descreve o modelo"
               />
             </Field>
           </div>
@@ -414,10 +558,11 @@ function DraftCard({
   );
 }
 
+const inputCls =
+  "w-full rounded-xl border border-white/15 bg-white/5 px-3 py-2 text-sm text-white outline-none focus:border-[color:var(--pink)]";
+
 function Field({
-  label,
-  children,
-  className = "",
+  label, children, className = "",
 }: {
   label: string;
   children: React.ReactNode;
@@ -432,23 +577,22 @@ function Field({
 }
 
 function Select({
-  value,
-  onChange,
-  options,
+  value, onChange, options, labelFor,
 }: {
   value: string;
   onChange: (v: string) => void;
   options: string[];
+  labelFor?: (v: string) => string;
 }) {
   return (
     <select
       value={value}
       onChange={(e) => onChange(e.target.value)}
-      className="w-full rounded-xl border border-white/15 bg-white/5 px-3 py-2 text-sm text-white outline-none focus:border-[color:var(--pink)]"
+      className={inputCls}
     >
       {options.map((o) => (
-        <option key={o} value={o} className="bg-[#061A33]">
-          {o}
+        <option key={o || "__empty"} value={o} className="bg-[#061A33]">
+          {labelFor ? labelFor(o) : o}
         </option>
       ))}
     </select>
