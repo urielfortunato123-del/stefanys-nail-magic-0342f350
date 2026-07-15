@@ -27,8 +27,11 @@ export interface BookingState {
   colors: string[];
   frenchTip: "Sim" | "Não" | "Talvez" | "";
   decorations: string[];
-  referenceImage?: string; // dataURL
+  referenceImage?: string; // dataURL de prévia (não é enviado, só exibição local)
   referenceImageName?: string;
+  referenceImageUrl?: string; // URL pública/assinada da imagem no storage
+  referenceImagePath?: string; // caminho no bucket
+  referenceImageConsent?: boolean;
   referenceModel?: { id: string; title: string; imageUrl: string; category: string };
 
 

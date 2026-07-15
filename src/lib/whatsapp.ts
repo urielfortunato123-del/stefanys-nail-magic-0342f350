@@ -40,7 +40,7 @@ Estilo desejado: ${d.styles.join(", ") || "-"}
 Cor escolhida: ${d.colors.join(", ") || "-"}
 Francesinha: ${d.frenchTip || "-"}
 Decoração: ${d.decorations.join(", ") || "-"}
-Foto de referência: ${d.referenceImage ? "Sim (enviarei em seguida no WhatsApp)" : "Não"}
+Foto de referência: ${d.referenceImageUrl ? d.referenceImageUrl : d.referenceImage ? "Sim (enviarei em seguida no WhatsApp)" : "Não"}
 ${d.referenceModel ? `Modelo escolhido: ${d.referenceModel.title} (${d.referenceModel.category})` : ""}
 
 📅 DATA E HORÁRIO

@@ -1,11 +1,12 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { ArrowLeft, ArrowRight, Check, MapPin, Camera, X, MessageCircle, Sparkles } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, MapPin, Camera, X, MessageCircle, Sparkles, Loader2, AlertCircle } from "lucide-react";
 import { useBooking, persistSavedClient } from "@/lib/booking-context";
 import { services } from "@/data/services";
 import { availableTimes, periods } from "@/data/availableTimes";
 import { businessConfig, whatsappLink } from "@/config/business";
 import { buildWhatsAppMessage } from "@/lib/whatsapp";
+import { uploadReferenceImage } from "@/lib/upload-reference";
 
 export const Route = createFileRoute("/agendar")({
   head: () => ({
@@ -79,9 +80,15 @@ function AgendarPage() {
 
   const progress = ((step + 1) / STEPS.length) * 100;
 
+  const uploadPending = !!data.referenceImage && !data.referenceImageUrl;
+
   const send = () => {
     const err = validate(9);
     if (err) { setError(err); return; }
+    if (uploadPending) {
+      setError("Aguarde, estamos preparando sua foto para enviar à Stefany.");
+      return;
+    }
     if (data.saveData) persistSavedClient(data);
     const message = buildWhatsAppMessage(data);
     window.open(whatsappLink(message), "_blank");
@@ -128,8 +135,8 @@ function AgendarPage() {
             Continuar <ArrowRight className="h-4 w-4" />
           </button>
         ) : (
-          <button onClick={send} className="flex flex-1 items-center justify-center gap-1.5 rounded-full bg-[color:var(--pink)] px-5 py-3 text-sm font-semibold text-[color:var(--navy)] pink-glow">
-            <MessageCircle className="h-4 w-4" /> Enviar para o WhatsApp
+          <button onClick={send} disabled={uploadPending} className="flex flex-1 items-center justify-center gap-1.5 rounded-full bg-[color:var(--pink)] px-5 py-3 text-sm font-semibold text-[color:var(--navy)] pink-glow disabled:opacity-60">
+            {uploadPending ? (<><Loader2 className="h-4 w-4 animate-spin" /> Preparando foto...</>) : (<><MessageCircle className="h-4 w-4" /> Enviar para o WhatsApp</>)}
           </button>
         )}
       </div>
@@ -385,6 +392,9 @@ const COLORS: { name: string; hex: string }[] = [
 const EXTRA_COLOR_OPTS = ["Outra cor", "Ainda não decidi"];
 
 function StepColors({ data, update }: StepProps) {
+  const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
+
   const toggleColor = (c: string) => {
     const set = new Set(data.colors);
     set.has(c) ? set.delete(c) : set.add(c);
@@ -395,12 +405,49 @@ function StepColors({ data, update }: StepProps) {
     set.has(c) ? set.delete(c) : set.add(c);
     update({ decorations: Array.from(set) });
   };
-  const onFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+
+  const removePhoto = () => {
+    update({
+      referenceImage: undefined,
+      referenceImageName: undefined,
+      referenceImageUrl: undefined,
+      referenceImagePath: undefined,
+    });
+    setUploadError(null);
+  };
+
+  const onFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
+    e.target.value = ""; // permite re-selecionar o mesmo arquivo
     if (!file) return;
+    if (!data.referenceImageConsent) {
+      setUploadError("Marque o consentimento para poder enviar a foto.");
+      return;
+    }
+    if (file.size > 15 * 1024 * 1024) {
+      setUploadError("A foto está muito grande (limite 15 MB).");
+      return;
+    }
+    setUploadError(null);
+    // Prévia local
     const reader = new FileReader();
-    reader.onload = () => update({ referenceImage: reader.result as string, referenceImageName: file.name });
+    reader.onload = () =>
+      update({ referenceImage: reader.result as string, referenceImageName: file.name });
     reader.readAsDataURL(file);
+
+    setUploading(true);
+    try {
+      const { path, signedUrl } = await uploadReferenceImage(file);
+      update({ referenceImagePath: path, referenceImageUrl: signedUrl });
+    } catch (err) {
+      console.error(err);
+      setUploadError(
+        "Não foi possível preparar a foto. Tente novamente ou envie diretamente pelo WhatsApp.",
+      );
+      update({ referenceImageUrl: undefined, referenceImagePath: undefined });
+    } finally {
+      setUploading(false);
+    }
   };
   return (
     <div>
@@ -474,24 +521,75 @@ function StepColors({ data, update }: StepProps) {
 
         <div>
           <p className="mb-2 text-xs font-medium uppercase tracking-wider text-white/50">Foto de inspiração</p>
+
+          <label className="mb-3 flex items-start gap-2 rounded-2xl border border-white/10 bg-white/[0.02] p-3 text-[11px] text-white/70">
+            <input
+              type="checkbox"
+              className="mt-0.5 h-3.5 w-3.5 accent-[color:var(--pink)]"
+              checked={!!data.referenceImageConsent}
+              onChange={(e) => update({ referenceImageConsent: e.target.checked })}
+            />
+            <span>
+              Autorizo o uso desta foto apenas para análise do serviço e atendimento pela Stefany.
+            </span>
+          </label>
+
           {data.referenceImage ? (
             <div className="relative">
               <img src={data.referenceImage} alt="Referência" className="max-h-64 w-full rounded-2xl object-cover" />
-              <button onClick={() => update({ referenceImage: undefined, referenceImageName: undefined })} aria-label="Remover" className="absolute right-2 top-2 grid h-8 w-8 place-items-center rounded-full bg-black/60 text-white">
+              <button
+                type="button"
+                onClick={removePhoto}
+                disabled={uploading}
+                aria-label="Remover"
+                className="absolute right-2 top-2 grid h-8 w-8 place-items-center rounded-full bg-black/60 text-white"
+              >
                 <X className="h-4 w-4" />
               </button>
+              {uploading && (
+                <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 rounded-2xl bg-black/60 text-white">
+                  <Loader2 className="h-6 w-6 animate-spin" />
+                  <span className="text-xs">Preparando sua foto para enviar à Stefany...</span>
+                </div>
+              )}
+              {!uploading && data.referenceImageUrl && (
+                <p className="mt-2 flex items-center gap-1 text-[11px] text-emerald-300">
+                  <Check className="h-3.5 w-3.5" /> Foto pronta para envio
+                </p>
+              )}
+              {!uploading && !data.referenceImageUrl && !uploadError && (
+                <p className="mt-2 text-[11px] text-white/60">Aguarde, estamos preparando sua foto...</p>
+              )}
+              <label className="mt-2 inline-flex cursor-pointer items-center gap-1 rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-xs text-white">
+                <Camera className="h-3.5 w-3.5" /> Trocar foto
+                <input type="file" accept="image/*" capture="environment" className="hidden" onChange={onFile} />
+              </label>
             </div>
           ) : (
-            <label className="flex cursor-pointer flex-col items-center gap-2 rounded-2xl border border-dashed border-white/20 bg-white/[0.02] p-6 text-center hover:bg-white/5">
+            <label
+              className={`flex flex-col items-center gap-2 rounded-2xl border border-dashed border-white/20 bg-white/[0.02] p-6 text-center ${data.referenceImageConsent ? "cursor-pointer hover:bg-white/5" : "cursor-not-allowed opacity-60"}`}
+            >
               <Camera className="h-6 w-6 text-[color:var(--pink)]" />
               <span className="text-sm text-white">Envie uma foto de inspiração</span>
               <span className="text-xs text-white/50">Abrir câmera ou galeria</span>
-              <input type="file" accept="image/*" capture="environment" className="hidden" onChange={onFile} />
+              <input
+                type="file"
+                accept="image/*"
+                capture="environment"
+                disabled={!data.referenceImageConsent}
+                className="hidden"
+                onChange={onFile}
+              />
             </label>
+          )}
+          {uploadError && (
+            <p className="mt-2 flex items-center gap-1 text-[11px] text-red-300">
+              <AlertCircle className="h-3.5 w-3.5" /> {uploadError}
+            </p>
           )}
           <p className="mt-2 text-[11px] text-[color:var(--gold)]">
             <Sparkles className="mr-1 inline h-3 w-3" />
-            Após abrir o WhatsApp, envie também a foto de referência selecionada.
+            Sua foto será enviada automaticamente com o pedido no WhatsApp.
           </p>
         </div>
       </div>
