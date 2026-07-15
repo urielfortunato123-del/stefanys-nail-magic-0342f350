@@ -1,11 +1,12 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { ArrowLeft, ArrowRight, Check, MapPin, Camera, X, MessageCircle, Sparkles } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, MapPin, Camera, X, MessageCircle, Sparkles, Loader2, AlertCircle } from "lucide-react";
 import { useBooking, persistSavedClient } from "@/lib/booking-context";
 import { services } from "@/data/services";
 import { availableTimes, periods } from "@/data/availableTimes";
 import { businessConfig, whatsappLink } from "@/config/business";
 import { buildWhatsAppMessage } from "@/lib/whatsapp";
+import { uploadReferenceImage } from "@/lib/upload-reference";
 
 export const Route = createFileRoute("/agendar")({
   head: () => ({
