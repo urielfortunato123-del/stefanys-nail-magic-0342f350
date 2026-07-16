@@ -40,13 +40,22 @@ export interface InspiracaoRow {
 }
 
 const BUCKET = "inspiracoes";
-const SIGNED_URL_TTL = 60 * 60 * 24 * 7; // 7 dias — atualizado a cada carga
+const SIGNED_URL_TTL = 60 * 60 * 24 * 365; // 1 ano — atualizado quando necessário
 
 // Cache de URLs assinadas por sessão
 const signedUrlCache = new Map<string, { url: string; expiresAt: number }>();
 
-export async function resolveImageUrl(row: Pick<InspiracaoRow, "imagem_url" | "storage_path">): Promise<string> {
+/**
+ * Retorna a URL a exibir. Para itens legados (imagem_url em /public), retorna direto.
+ * Para itens no Storage privado, usa imagem_url salvo (URL assinada de longa duração)
+ * — só regenera sob demanda quando explicitamente forçado.
+ */
+export async function resolveImageUrl(
+  row: Pick<InspiracaoRow, "imagem_url" | "storage_path">,
+  { force = false }: { force?: boolean } = {},
+): Promise<string> {
   if (!row.storage_path) return row.imagem_url;
+  if (!force && row.imagem_url) return row.imagem_url;
   const cached = signedUrlCache.get(row.storage_path);
   const now = Date.now();
   if (cached && cached.expiresAt > now + 60_000) return cached.url;
