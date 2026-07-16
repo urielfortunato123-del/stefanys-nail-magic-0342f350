@@ -1,5 +1,5 @@
 export type NailShape =
-  | "Amendoada"
+  | "Mandorla"
   | "Almond"
   | "Bailarina"
   | "Stiletto"
@@ -72,7 +72,7 @@ export const categoryOrder: Record<string, number> = {
 
 // Formatos disponíveis nos filtros de inspiração (mãos).
 export const inspirationShapes = [
-  "Amendoada",
+  "Mandorla",
   "Quadrada",
   "Bailarina",
   "Oval",
@@ -83,16 +83,16 @@ export type InspirationShape = (typeof inspirationShapes)[number];
 // Inspirações de mãos — cada cartão é identificado somente pelo formato.
 // Imagens ficam em public/inspiracoes/maos/ como caminhos relativos estáveis.
 const handInspirations: Array<{ url: string; shape: InspirationShape }> = [
-  { url: "/inspiracoes/maos/inspiracao-maos-01.jpg", shape: "Amendoada" },
-  { url: "/inspiracoes/maos/inspiracao-maos-02.jpg", shape: "Amendoada" },
+  { url: "/inspiracoes/maos/inspiracao-maos-01.jpg", shape: "Mandorla" },
+  { url: "/inspiracoes/maos/inspiracao-maos-02.jpg", shape: "Mandorla" },
   { url: "/inspiracoes/maos/inspiracao-maos-03.jpg", shape: "Quadrada" },
   { url: "/inspiracoes/maos/inspiracao-maos-04.jpg", shape: "Bailarina" },
-  { url: "/inspiracoes/maos/inspiracao-maos-05.jpg", shape: "Amendoada" },
-  { url: "/inspiracoes/maos/inspiracao-maos-06.jpg", shape: "Amendoada" },
+  { url: "/inspiracoes/maos/inspiracao-maos-05.jpg", shape: "Mandorla" },
+  { url: "/inspiracoes/maos/inspiracao-maos-06.jpg", shape: "Mandorla" },
   { url: "/inspiracoes/maos/inspiracao-maos-07.jpg", shape: "Oval" },
   { url: "/inspiracoes/maos/inspiracao-maos-08.jpg", shape: "Stiletto" },
   { url: "/inspiracoes/maos/inspiracao-maos-09.jpg", shape: "Bailarina" },
-  { url: "/inspiracoes/maos/inspiracao-maos-10.jpg", shape: "Amendoada" },
+  { url: "/inspiracoes/maos/inspiracao-maos-10.jpg", shape: "Mandorla" },
   { url: "/inspiracoes/maos/inspiracao-maos-11.jpg", shape: "Oval" },
   { url: "/inspiracoes/maos/inspiracao-maos-12.jpg", shape: "Bailarina" },
   { url: "/inspiracoes/maos/inspiracao-maos-13.jpg", shape: "Stiletto" },
