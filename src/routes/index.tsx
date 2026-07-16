@@ -1,7 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { HomeIcon, HeartHandshake, Sparkles, Clock, Gem, Instagram, MessageCircle, MapPin, Info, CalendarHeart, ChevronRight } from "lucide-react";
+import { useEffect, useMemo, useState, useRef } from "react";
+import { HomeIcon, HeartHandshake, Sparkles, Clock, Gem, Instagram, MessageCircle, MapPin, Info, CalendarHeart, ChevronRight, ChevronLeft, X } from "lucide-react";
 import { businessConfig, whatsappLink } from "@/config/business";
-import { gallery } from "@/data/gallery";
+import { gallery, type GalleryItem } from "@/data/gallery";
 import { LOGO_URL as logo } from "@/config/business";
 
 export const Route = createFileRoute("/")({
