@@ -7,7 +7,7 @@ const developerLink = `https://wa.me/5515996969953?text=${developerMessage}`;
 
 export function SiteFooter() {
   return (
-    <footer className="mt-10 border-t border-white/10 bg-[color:var(--navy)] px-4 py-6 text-center">
+    <footer className="mt-10 border-t border-[color:var(--pink)]/25 bg-white/60 backdrop-blur px-4 py-6 text-center">
       <p className="text-[11px] uppercase tracking-[0.18em] text-white/50">
         Desenvolvido por
       </p>
