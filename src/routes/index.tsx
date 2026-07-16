@@ -160,6 +160,11 @@ function Home() {
                 className="aspect-square w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
                 onError={(e) => { (e.currentTarget as HTMLImageElement).src = "/images/nails/placeholder.jpg"; }}
               />
+              {g.isProcess && (
+                <span className="absolute left-2 top-2 rounded-full bg-[color:var(--pink)] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-[#08213D] shadow">
+                  Processo
+                </span>
+              )}
             </button>
           ))}
         </div>
@@ -199,12 +204,20 @@ function Home() {
           >
             <ChevronRight className="h-6 w-6" />
           </button>
-          <img
-            src={current.imageUrl}
-            alt={current.title}
-            onClick={(e) => e.stopPropagation()}
-            className="max-h-[85vh] max-w-full rounded-2xl object-contain shadow-2xl"
-          />
+          <div className="relative max-h-[85vh] max-w-full" onClick={(e) => e.stopPropagation()}>
+            <img
+              src={current.imageUrl}
+              alt={current.title}
+              className="max-h-[85vh] max-w-full rounded-2xl object-contain shadow-2xl"
+            />
+            {current.isProcess && (
+              <div className="mt-3 rounded-xl bg-black/50 px-3 py-2 text-center text-white backdrop-blur">
+                <span className="mr-2 inline-block rounded-full bg-[color:var(--pink)] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-[#08213D]">Processo</span>
+                <span className="text-sm font-medium">{current.title}</span>
+                {current.description && <p className="mt-1 text-xs text-white/80">{current.description}</p>}
+              </div>
+            )}
+          </div>
         </div>
       )}
 
