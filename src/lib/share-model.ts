@@ -65,7 +65,7 @@ export async function shareModel(item: GalleryItem, observacoes?: string) {
       typeof navigator.share === "function" &&
       typeof navigator.canShare === "function"
     ) {
-      const response = await fetch(item.imageUrl, { mode: "cors" });
+      const response = await fetch(getAbsoluteImageUrl(item), { mode: "cors" });
       if (response.ok) {
         const blob = await response.blob();
         const ext = blob.type.includes("png") ? "png" : "jpg";
