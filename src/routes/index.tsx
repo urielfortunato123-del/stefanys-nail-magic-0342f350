@@ -125,24 +125,24 @@ function Home() {
         </div>
       </section>
 
-      {/* Gallery preview */}
+      {/* Inspirações preview */}
       <section>
         <div className="mb-3 flex items-end justify-between">
-          <h2 className="font-display text-lg text-white">Alguns trabalhos</h2>
+          <h2 className="font-display text-lg text-white">Inspirações</h2>
           <Link to="/inspiracoes" className="flex items-center gap-1 text-xs text-[color:var(--pink)]">
-            Ver todos <ChevronRight className="h-3 w-3" />
+            Ver todas <ChevronRight className="h-3 w-3" />
           </Link>
         </div>
-        <div className="mb-3 flex gap-2" role="tablist" aria-label="Filtrar trabalhos">
-          {(["Todos", "Mãos", "Pés"] as BodyFilter[]).map((f) => {
-            const active = bodyFilter === f;
+        <div className="-mx-4 mb-3 flex gap-2 overflow-x-auto px-4 no-scrollbar" role="tablist" aria-label="Filtrar por formato">
+          {inspirationFilters.map((f) => {
+            const active = filter === f;
             return (
               <button
                 key={f}
                 role="tab"
                 aria-selected={active}
-                onClick={() => setBodyFilter(f)}
-                className={`rounded-full px-4 py-1.5 text-xs font-semibold transition-all ${
+                onClick={() => setFilter(f)}
+                className={`shrink-0 rounded-full px-4 py-1.5 text-xs font-semibold transition-all ${
                   active
                     ? "bg-[color:var(--pink)] text-[color:var(--navy)] shadow-sm"
                     : "border border-white/15 bg-white/5 text-white/80 hover:bg-white/10"
@@ -155,34 +155,54 @@ function Home() {
         </div>
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
           {preview.map((g, i) => (
-            <button
+            <div
               key={g.id}
-              onClick={() => setLightboxIdx(i)}
-              className="group relative overflow-hidden rounded-2xl border border-white/10 bg-[#08213D] shadow-[0_8px_20px_-12px_rgba(0,0,0,0.6)] transition-transform active:scale-[0.98]"
-              aria-label={`Abrir ${g.title}`}
+              className="group relative flex flex-col overflow-hidden rounded-2xl border border-white/10 bg-[#08213D] shadow-[0_8px_20px_-12px_rgba(0,0,0,0.6)]"
             >
-              <img
-                src={g.imageUrl}
-                alt={g.title}
-                loading="lazy"
-                decoding="async"
-                className="aspect-square w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
-                onError={(e) => { (e.currentTarget as HTMLImageElement).src = "/images/nails/placeholder.jpg"; }}
-              />
-              {g.isProcess && (
-                <span className="absolute left-2 top-2 rounded-full bg-[color:var(--pink)] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-[#08213D] shadow">
-                  Processo
-                </span>
+              <button
+                onClick={() => setLightboxIdx(i)}
+                className="relative block w-full text-left"
+                aria-label={`Ampliar ${g.title}`}
+              >
+                <img
+                  src={g.imageUrl}
+                  alt={g.title}
+                  loading="lazy"
+                  decoding="async"
+                  className="aspect-square w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
+                  onError={(e) => { (e.currentTarget as HTMLImageElement).src = "/images/nails/placeholder.jpg"; }}
+                />
+                {g.isProcess && (
+                  <span className="absolute left-2 top-2 rounded-full bg-[color:var(--pink)] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-[#08213D] shadow">
+                    Processo
+                  </span>
+                )}
+              </button>
+              {g.bodyPart !== "feet" && !g.isProcess && (
+                <div className="flex flex-col gap-1.5 p-2.5">
+                  <div>
+                    <p className="text-sm font-semibold text-white">{g.shape}</p>
+                    <p className="text-[10px] uppercase tracking-widest text-white/50">Inspiração</p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => openInspirationOnWhatsApp(g)}
+                    className="flex items-center justify-center gap-1.5 rounded-full bg-[#25D366] py-1.5 text-[11px] font-semibold text-white shadow-sm"
+                  >
+                    <MessageCircle className="h-3 w-3" /> Quero esta inspiração
+                  </button>
+                </div>
               )}
-            </button>
+            </div>
           ))}
         </div>
         {preview.length === 0 && (
           <p className="rounded-2xl border border-white/10 bg-white/5 p-6 text-center text-sm text-white/70">
-            Sem trabalhos nesta categoria ainda.
+            Sem inspirações nesta categoria ainda.
           </p>
         )}
       </section>
+
 
       {/* Lightbox */}
       {current && (
