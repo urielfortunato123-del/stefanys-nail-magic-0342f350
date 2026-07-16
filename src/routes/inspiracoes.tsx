@@ -145,14 +145,15 @@ function Inspiracoes() {
   };
 
   const shareItem = async (g: GalleryItem) => {
-    const url = g.imageUrl;
-    const text = `Olha esse modelo da Stefany: ${g.title}`;
+    const url = new URL(g.imageUrl, window.location.origin).href;
+    const categoria = g.bodyPart === "feet" ? "Pés" : "Mãos";
+    const text = `Inspiração ${categoria} — ${g.title} por Stefany Próspero`;
     try {
-      if (navigator.share) {
+      if (typeof navigator !== "undefined" && typeof navigator.share === "function") {
         await navigator.share({ title: g.title, text, url });
         return;
       }
-      await navigator.clipboard.writeText(`${text} — ${url}`);
+      await navigator.clipboard.writeText(`${text}\n${url}`);
     } catch {}
   };
 
