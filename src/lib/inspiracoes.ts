@@ -97,13 +97,17 @@ export function toGalleryItem(row: InspiracaoRow, imageUrl: string): GalleryItem
   };
 }
 
-export async function listInspiracoesActive(): Promise<InspiracaoRow[]> {
-  const { data, error } = await supabase
+const LIST_FIELDS = "id,titulo,tipo,formato,estilo,cor,imagem_url,storage_path,ativo,ordem,criado_em,atualizado_em,criado_por";
+
+export async function listInspiracoesActive(signal?: AbortSignal): Promise<InspiracaoRow[]> {
+  const q = supabase
     .from("inspiracoes")
-    .select("*")
+    .select(LIST_FIELDS)
     .eq("ativo", true);
+  if (signal) q.abortSignal(signal);
+  const { data, error } = await q;
   if (error || !data) return [];
-  return sortInspiracoes(data as InspiracaoRow[]);
+  return sortInspiracoes(data as unknown as InspiracaoRow[]);
 }
 
 export async function listInspiracoesAll(): Promise<InspiracaoRow[]> {
@@ -129,12 +133,11 @@ export function sortInspiracoes(rows: InspiracaoRow[]): InspiracaoRow[] {
   });
 }
 
-export async function loadGalleryFromInspiracoes(): Promise<GalleryItem[]> {
-  const rows = await listInspiracoesActive();
-  const items = await Promise.all(
-    rows.map(async (r) => toGalleryItem(r, await resolveImageUrl(r))),
-  );
-  return items;
+export async function loadGalleryFromInspiracoes(signal?: AbortSignal): Promise<GalleryItem[]> {
+  const rows = await listInspiracoesActive(signal);
+  // imagem_url já é utilizável (URL pública/legada ou URL assinada persistida).
+  // Não geramos signed URLs em massa — evita cascata de N requisições.
+  return rows.map((r) => toGalleryItem(r, r.imagem_url));
 }
 
 // ---- Upload / criação ----
