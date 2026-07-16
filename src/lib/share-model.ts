@@ -19,27 +19,35 @@ export function setHideShareTip(hide: boolean) {
   } catch {}
 }
 
+/** Retorna sempre uma URL pública absoluta para a imagem do item. */
+export function getAbsoluteImageUrl(item: GalleryItem): string {
+  if (typeof window === "undefined") return item.imageUrl;
+  try {
+    return new URL(item.imageUrl, window.location.origin).href;
+  } catch {
+    return item.imageUrl;
+  }
+}
+
+function categoriaLabel(item: GalleryItem) {
+  return item.bodyPart === "feet" ? "Pés" : "Mãos";
+}
+
 export function buildModelMessage(item: GalleryItem, observacoes?: string) {
-  return `Olá, Stefany! 💅
+  const imageUrl = getAbsoluteImageUrl(item);
+  const obs = observacoes?.trim();
+  return `Olá, Stefany! Gostei desta inspiração e quero fazer algo parecido.
 
-Gostaria de fazer este modelo:
+Categoria: ${categoriaLabel(item)}
+Inspiração: ${item.title}
 
-✨ Modelo: ${item.title}
-📂 Categoria: ${item.category}
-💅 Formato: ${item.shape}
-🎨 Cor principal: ${item.mainColor}
-✨ Acabamento: ${item.finish}
-
-Observações:
-${observacoes?.trim() ? observacoes.trim() : "Nenhuma observação."}`;
+Foto escolhida:
+${imageUrl}${obs ? `\n\nObservações:\n${obs}` : ""}`;
 }
 
 export function openWhatsAppWithImageLink(item: GalleryItem, message: string) {
-  const texto = `${message}
-
-🖼️ Foto do modelo:
-${item.imageUrl}`;
-  const url = whatsappLink(texto);
+  // Mensagem já contém o link público absoluto da foto.
+  const url = whatsappLink(message);
   window.open(url, "_blank", "noopener,noreferrer");
 }
 
