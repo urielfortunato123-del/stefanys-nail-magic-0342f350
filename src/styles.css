@@ -205,5 +205,14 @@ input, textarea, select {
   color: #061A33;
 }
 
+.logo-stefany {
+  width: 54px;
+  height: 54px;
+  object-fit: contain;
+  display: block;
+  flex-shrink: 0;
+  border-radius: 9999px;
+}
+
 
 
