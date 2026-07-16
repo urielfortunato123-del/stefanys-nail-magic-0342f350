@@ -5,7 +5,7 @@ const logo = LOGO_URL;
 
 export function AppHeader({ onMenu }: { onMenu?: () => void }) {
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-white/5 bg-[color:var(--navy)]/85 backdrop-blur">
+    <header className="sticky top-0 z-40 w-full border-b border-[color:var(--pink)]/25 bg-white/70 backdrop-blur-md">
       <div className="mx-auto flex max-w-2xl items-center gap-3 px-4 py-3">
         <Link to="/" className="flex min-w-0 items-center gap-2">
           <div className="h-14 w-14 overflow-hidden rounded-full">

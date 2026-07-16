@@ -127,7 +127,7 @@ function AgendarPage() {
       )}
 
       <div className="sticky bottom-24 z-30 flex gap-2 md:bottom-4">
-        <button onClick={prev} className="flex items-center gap-1.5 rounded-full border border-white/20 bg-[color:var(--navy)]/80 px-5 py-3 text-sm font-medium text-white backdrop-blur">
+        <button onClick={prev} className="flex items-center gap-1.5 rounded-full border border-[color:var(--pink)]/40 bg-white/70 px-5 py-3 text-sm font-medium text-[color:var(--navy)] backdrop-blur">
           <ArrowLeft className="h-4 w-4" /> Voltar
         </button>
         {step < STEPS.length - 1 ? (
