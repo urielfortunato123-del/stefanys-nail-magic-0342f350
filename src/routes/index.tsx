@@ -33,7 +33,11 @@ type InspirationFilter = "Todas" | (typeof inspirationShapes)[number] | "Pés";
 const inspirationFilters: InspirationFilter[] = ["Todas", ...inspirationShapes, "Pés"];
 
 function openInspirationOnWhatsApp(g: GalleryItem) {
-  const msg = `Olá, Stefany! Gostei desta inspiração no formato ${g.shape} e gostaria de fazer algo parecido.
+  const intro =
+    g.bodyPart === "feet"
+      ? "Olá, Stefany! Gostei desta inspiração para os pés e gostaria de fazer algo parecido."
+      : `Olá, Stefany! Gostei desta inspiração no formato ${g.shape} e gostaria de fazer algo parecido.`;
+  const msg = `${intro}
 
 🖼️ Foto:
 ${g.imageUrl}`;
