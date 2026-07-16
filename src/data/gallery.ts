@@ -7,6 +7,8 @@ export type NailFinish =
   | "Pintura Artística"
   | "Francesinha";
 
+export type BodyPart = "hands" | "feet";
+
 export interface GalleryItem {
   id: string;
   title: string;
@@ -19,6 +21,7 @@ export interface GalleryItem {
   duration: string;
   durability: string;
   featured?: boolean;
+  bodyPart?: BodyPart; // default "hands" quando ausente
   // opcionais (populados via banco; itens estáticos ficam com defaults)
   length?: string;
   secondaryColor?: string | null;
