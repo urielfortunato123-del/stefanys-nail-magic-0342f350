@@ -182,11 +182,15 @@ function Home() {
                   </span>
                 )}
               </button>
-              {g.bodyPart !== "feet" && !g.isProcess && (
+              {!g.isProcess && (
                 <div className="flex flex-col gap-1.5 p-2.5">
                   <div>
-                    <p className="text-sm font-semibold text-white">{g.shape}</p>
-                    <p className="text-[10px] uppercase tracking-widest text-white/50">Inspiração</p>
+                    <p className="text-sm font-semibold text-white">
+                      {g.bodyPart === "feet" ? g.title : g.shape}
+                    </p>
+                    <p className="text-[10px] uppercase tracking-widest text-white/50">
+                      {g.bodyPart === "feet" ? "Inspiração para os pés" : "Inspiração"}
+                    </p>
                   </div>
                   <button
                     type="button"
