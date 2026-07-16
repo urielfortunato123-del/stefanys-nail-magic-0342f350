@@ -12,7 +12,7 @@ export const businessConfig = {
   instagramUrl: "https://instagram.com/stefany_prospero.nails",
   description: "Agendamentos e serviços de nail designer em domicílio.",
   // Caminho único da logo — troque aqui para atualizar em todo o app.
-  logoPath: "/images/logo-stefany.png",
+  logoPath: "/__l5e/assets-v1/729c6d7b-0a9e-485e-9d92-6526a55f78bb/logo-stefany.jpg",
 };
 
 export const LOGO_URL = businessConfig.logoPath;
