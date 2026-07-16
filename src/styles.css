@@ -111,31 +111,21 @@
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
-    background-color: #FDF6F3;
+    background: transparent;
   }
 
-  /* Decorative fixed background: photo + white translucent veil + subtle blur */
-  body::before {
-    content: "";
-    position: fixed;
-    inset: 0;
-    z-index: -2;
-    background-image: url("/__l5e/assets-v1/0ca8eacf-d6ac-4b38-9e9c-4f8c442859ab/stefany-bg.png");
+  body {
+    background-image:
+      linear-gradient(rgba(255, 255, 255, 0.62), rgba(255, 245, 248, 0.68)),
+      url('/stefany-background.png');
     background-size: cover;
-    background-position: center 25%;
+    background-position: center 20%;
     background-repeat: no-repeat;
     background-attachment: fixed;
-    filter: blur(3px) saturate(1.05);
-    transform: scale(1.03); /* hide blur edges */
-    pointer-events: none;
   }
-  body::after {
-    content: "";
-    position: fixed;
-    inset: 0;
-    z-index: -1;
-    background-color: rgba(255, 255, 255, 0.86);
-    pointer-events: none;
+
+  #root, main {
+    background: transparent;
   }
 
   h1, h2, h3, .font-display {
@@ -164,15 +154,15 @@
   .border-white\/10 { border-color: rgba(247, 168, 189, 0.30) !important; }
   .border-white\/20 { border-color: rgba(247, 168, 189, 0.40) !important; }
 
-  /* Backgrounds that were opaque navy surfaces become white glass. */
-  .bg-\[\#08213D\] { background-color: rgba(255, 255, 255, 0.75) !important; }
+  /* Backgrounds that were opaque navy surfaces become translucent glass. */
+  .bg-\[\#08213D\] { background-color: rgba(255, 255, 255, 0.88) !important; }
 }
 
 @utility glass-card {
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.7));
+  background: rgba(255, 255, 255, 0.88);
   border: 1px solid rgba(247, 168, 189, 0.35);
   box-shadow: 0 12px 40px -18px rgba(247, 168, 189, 0.35), 0 4px 16px -8px rgba(6, 26, 51, 0.08);
-  backdrop-filter: blur(10px) saturate(1.1);
+  backdrop-filter: blur(6px) saturate(1.1);
   border-radius: 1.25rem;
 }
 
