@@ -29,20 +29,29 @@ const quickLinks: { to: string; label: string; icon: typeof HomeIcon }[] = [
   { to: "/area-atendida", label: "Área atendida", icon: MapPin },
   { to: "/sobre", label: "Sobre a Stefany", icon: Info },
 ];
-type BodyFilter = "Todos" | "Mãos" | "Pés";
+type InspirationFilter = "Todas" | (typeof inspirationShapes)[number] | "Pés";
+const inspirationFilters: InspirationFilter[] = ["Todas", ...inspirationShapes, "Pés"];
+
+function openInspirationOnWhatsApp(g: GalleryItem) {
+  const msg = `Olá, Stefany! Gostei desta inspiração no formato ${g.shape} e gostaria de fazer algo parecido.
+
+🖼️ Foto:
+${g.imageUrl}`;
+  window.open(whatsappLink(msg), "_blank", "noopener,noreferrer");
+}
 
 function Home() {
-  const [bodyFilter, setBodyFilter] = useState<BodyFilter>("Todos");
+  const [filter, setFilter] = useState<InspirationFilter>("Todas");
   const [lightboxIdx, setLightboxIdx] = useState<number | null>(null);
 
   const filteredWorks = useMemo(() => {
     const isFeet = (g: GalleryItem) => g.bodyPart === "feet";
-    if (bodyFilter === "Mãos") return gallery.filter((g) => !isFeet(g));
-    if (bodyFilter === "Pés") return gallery.filter(isFeet);
-    return gallery;
-  }, [bodyFilter]);
+    if (filter === "Pés") return gallery.filter(isFeet);
+    if (filter === "Todas") return gallery.filter((g) => !isFeet(g));
+    return gallery.filter((g) => !isFeet(g) && g.shape === filter);
+  }, [filter]);
 
-  const preview = useMemo(() => filteredWorks.slice(0, 8), [filteredWorks]);
+  const preview = filteredWorks;
   const current = lightboxIdx != null ? preview[lightboxIdx] : null;
 
   const next = () => setLightboxIdx((i) => (i == null ? i : (i + 1) % preview.length));
