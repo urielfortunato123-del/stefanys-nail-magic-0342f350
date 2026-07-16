@@ -1,16 +1,24 @@
-import { supabase } from "@/integrations/supabase/client";
 import type { GalleryItem } from "@/data/gallery";
 import { gallery as staticGallery, categoryOrder } from "@/data/gallery";
 import { loadGalleryFromInspiracoes } from "@/lib/inspiracoes";
 
-export async function loadGallery(): Promise<GalleryItem[]> {
-  try {
-    const items = await loadGalleryFromInspiracoes();
-    if (items.length > 0) return items;
-  } catch {
-    // ignora e cai no fallback
-  }
-  // Fallback: usa o catálogo estático empacotado no build.
+function withTimeout<T>(p: Promise<T>, ms: number): Promise<T> {
+  return new Promise<T>((resolve, reject) => {
+    const t = setTimeout(() => reject(new Error("timeout")), ms);
+    p.then(
+      (v) => {
+        clearTimeout(t);
+        resolve(v);
+      },
+      (e) => {
+        clearTimeout(t);
+        reject(e);
+      },
+    );
+  });
+}
+
+function fallbackStatic(): GalleryItem[] {
   return [...staticGallery]
     .map((g) => ({
       ...g,
@@ -21,4 +29,14 @@ export async function loadGallery(): Promise<GalleryItem[]> {
       description: g.description ?? "",
     }))
     .sort((a, b) => (categoryOrder[a.category] ?? 99) - (categoryOrder[b.category] ?? 99));
+}
+
+export async function loadGallery(signal?: AbortSignal): Promise<GalleryItem[]> {
+  try {
+    const items = await withTimeout(loadGalleryFromInspiracoes(signal), 8000);
+    if (items.length > 0) return items;
+  } catch (e) {
+    console.error("Erro ao carregar inspirações:", e);
+  }
+  return fallbackStatic();
 }

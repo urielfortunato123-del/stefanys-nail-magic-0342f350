@@ -76,11 +76,16 @@ function NailImage({
       alt={alt}
       loading="lazy"
       decoding="async"
+      width={800}
+      height={1000}
       onError={() => setErrored(true)}
       className={`w-full bg-white object-cover ${className}`}
+      style={{ aspectRatio: "4 / 5" }}
     />
   );
 }
+
+const PAGE_SIZE = 6;
 
 function Inspiracoes() {
   const [bodyFilter, setBodyFilter] = useState<"Mãos" | "Pés">("Mãos");
@@ -92,19 +97,37 @@ function Inspiracoes() {
   const [hideTip, setHideTipState] = useState(false);
   const [showTip, setShowTip] = useState(false);
   const [gallery, setGallery] = useState<GalleryItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+  const [reloadKey, setReloadKey] = useState(0);
+  const [visible, setVisible] = useState<Record<"Mãos" | "Pés", number>>({ Mãos: PAGE_SIZE, Pés: PAGE_SIZE });
   const { favs, toggle } = useFavorites();
   const { data: booking, update } = useBooking();
   const navigate = useNavigate();
 
   useEffect(() => {
     let ok = true;
-    loadGallery().then((g) => {
-      if (ok) setGallery(g);
-    });
+    const controller = new AbortController();
+    setLoading(true);
+    setError(false);
+    loadGallery(controller.signal)
+      .then((g) => {
+        if (!ok) return;
+        setGallery(g);
+        if (g.length === 0) setError(true);
+      })
+      .catch((e) => {
+        console.error("Erro ao carregar inspirações:", e);
+        if (ok) setError(true);
+      })
+      .finally(() => {
+        if (ok) setLoading(false);
+      });
     return () => {
       ok = false;
+      controller.abort();
     };
-  }, []);
+  }, [reloadKey]);
 
   useEffect(() => {
     if (wantModel) {
@@ -114,13 +137,22 @@ function Inspiracoes() {
     }
   }, [wantModel]);
 
-  const filtered = useMemo(
+  const filteredAll = useMemo(
     () =>
       gallery.filter((g) =>
         bodyFilter === "Pés" ? g.bodyPart === "feet" : g.bodyPart !== "feet",
       ),
     [gallery, bodyFilter],
   );
+  const filtered = useMemo(
+    () => filteredAll.slice(0, visible[bodyFilter]),
+    [filteredAll, visible, bodyFilter],
+  );
+  const hasMore = filtered.length < filteredAll.length;
+
+  const loadMore = () =>
+    setVisible((v) => ({ ...v, [bodyFilter]: v[bodyFilter] + PAGE_SIZE }));
+
 
   const chooseAsReference = (g: GalleryItem) => {
     update({
@@ -188,11 +220,36 @@ function Inspiracoes() {
           })}
         </div>
         <p className="text-center text-[11px] text-white/50">
-          {filtered.length} {filtered.length === 1 ? "inspiração disponível" : "inspirações disponíveis"}
+          {loading
+            ? "Carregando inspirações…"
+            : `${filteredAll.length} ${filteredAll.length === 1 ? "inspiração disponível" : "inspirações disponíveis"}`}
         </p>
       </div>
 
-      {filtered.length === 0 && (
+      {loading && (
+        <div className="[column-fill:_balance] columns-2 gap-4 sm:columns-3 lg:columns-4">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <div
+              key={i}
+              className="mb-4 aspect-[4/5] w-full animate-pulse break-inside-avoid rounded-3xl bg-white/10"
+            />
+          ))}
+        </div>
+      )}
+
+      {!loading && error && (
+        <div className="rounded-3xl border border-white/10 bg-white/5 p-6 text-center text-sm text-white/70">
+          <p>Não foi possível carregar as inspirações.</p>
+          <button
+            onClick={() => setReloadKey((k) => k + 1)}
+            className="mt-3 rounded-full bg-[#F7A8BD] px-4 py-2 text-xs font-semibold text-[#061A33]"
+          >
+            Tentar novamente
+          </button>
+        </div>
+      )}
+
+      {!loading && !error && filteredAll.length === 0 && (
         <div className="rounded-3xl border border-white/10 bg-white/5 p-6 text-center text-sm text-white/70">
           Nenhuma inspiração disponível nesta categoria.
         </div>
@@ -280,6 +337,19 @@ function Inspiracoes() {
           );
         })}
       </div>
+
+      {hasMore && !loading && (
+        <div className="flex justify-center pt-2">
+          <button
+            onClick={loadMore}
+            className="rounded-full border border-[#F7A8BD]/50 bg-white/10 px-6 py-2 text-sm font-semibold text-white hover:bg-white/15"
+          >
+            Carregar mais
+          </button>
+        </div>
+      )}
+
+
 
       {/* Detail modal */}
       {selected && (
