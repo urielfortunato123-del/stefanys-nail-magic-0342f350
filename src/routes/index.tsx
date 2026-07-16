@@ -33,14 +33,15 @@ type InspirationFilter = "Todas" | (typeof inspirationShapes)[number] | "Pés";
 const inspirationFilters: InspirationFilter[] = ["Todas", ...inspirationShapes, "Pés"];
 
 function openInspirationOnWhatsApp(g: GalleryItem) {
-  const intro =
-    g.bodyPart === "feet"
-      ? "Olá, Stefany! Gostei desta inspiração para os pés e gostaria de fazer algo parecido."
-      : `Olá, Stefany! Gostei desta inspiração no formato ${g.shape} e gostaria de fazer algo parecido.`;
-  const msg = `${intro}
+  const categoria = g.bodyPart === "feet" ? "Pés" : "Mãos";
+  const imageUrl = new URL(g.imageUrl, window.location.origin).href;
+  const msg = `Olá, Stefany! Gostei desta inspiração e quero fazer algo parecido.
 
-🖼️ Foto:
-${g.imageUrl}`;
+Categoria: ${categoria}
+Inspiração: ${g.title}
+
+Foto escolhida:
+${imageUrl}`;
   window.open(whatsappLink(msg), "_blank", "noopener,noreferrer");
 }
 
