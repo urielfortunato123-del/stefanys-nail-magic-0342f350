@@ -83,15 +83,7 @@ function NailImage({
 }
 
 function Inspiracoes() {
-  const [filter, setFilter] = useState<string>("Todas");
-  const [bodyFilter, setBodyFilter] = useState<"Todos" | "Mãos" | "Pés">("Todos");
-  const [shapeFilter, setShapeFilter] = useState<string>("Todos");
-  const [colorFilter, setColorFilter] = useState<string>("Todas");
-  const [finishFilter, setFinishFilter] = useState<string>("Todos");
-  const [lengthFilter, setLengthFilter] = useState<string>("Todos");
-  const [styleFilter, setStyleFilter] = useState<string>("Todos");
-  const [occasionFilter, setOccasionFilter] = useState<string>("Todas");
-  const [query, setQuery] = useState<string>("");
+  const [bodyFilter, setBodyFilter] = useState<"Mãos" | "Pés">("Mãos");
   const [selected, setSelected] = useState<GalleryItem | null>(null);
   const [fullscreen, setFullscreen] = useState<GalleryItem | null>(null);
   const [wantModel, setWantModel] = useState<GalleryItem | null>(null);
@@ -122,109 +114,13 @@ function Inspiracoes() {
     }
   }, [wantModel]);
 
-  const shapes = useMemo<string[]>(
-    () => ["Todos", ...Array.from(new Set(gallery.map((g) => g.shape as string)))],
-    [gallery],
-  );
-  const colors = useMemo<string[]>(
-    () => ["Todas", ...Array.from(new Set(gallery.map((g) => g.mainColor)))],
-    [gallery],
-  );
-  const finishes = useMemo<string[]>(
-    () => ["Todos", ...Array.from(new Set(gallery.map((g) => g.finish as string)))],
-    [gallery],
-  );
-  const lengths = useMemo<string[]>(
-    () => ["Todos", ...Array.from(new Set(gallery.map((g) => g.length ?? "Médio")))],
-    [gallery],
-  );
-  const styles = useMemo<string[]>(
-    () => ["Todos", ...Array.from(new Set(gallery.map((g) => g.style ?? g.category)))],
-    [gallery],
-  );
-  const occasions = useMemo<string[]>(
-    () => ["Todas", ...Array.from(new Set(gallery.flatMap((g) => g.occasions ?? [])))],
-    [gallery],
-  );
-
   const filtered = useMemo(
     () =>
-      gallery.filter(
-        (g) =>
-          (bodyFilter === "Todos" ||
-            (bodyFilter === "Pés" ? g.bodyPart === "feet" : g.bodyPart !== "feet")) &&
-          (filter === "Todas" || g.category === filter) &&
-          (shapeFilter === "Todos" || g.shape === shapeFilter) &&
-          (colorFilter === "Todas" || g.mainColor === colorFilter) &&
-          (finishFilter === "Todos" || g.finish === finishFilter) &&
-          (lengthFilter === "Todos" || (g.length ?? "Médio") === lengthFilter) &&
-          (styleFilter === "Todos" || (g.style ?? g.category) === styleFilter) &&
-          (occasionFilter === "Todas" || (g.occasions ?? []).includes(occasionFilter)) &&
-          matchesQuery(g, query),
+      gallery.filter((g) =>
+        bodyFilter === "Pés" ? g.bodyPart === "feet" : g.bodyPart !== "feet",
       ),
-    [gallery, bodyFilter, filter, shapeFilter, colorFilter, finishFilter, lengthFilter, styleFilter, occasionFilter, query],
+    [gallery, bodyFilter],
   );
-
-  const activeFilters =
-    (filter !== "Todas" ? 1 : 0) +
-    (shapeFilter !== "Todos" ? 1 : 0) +
-    (colorFilter !== "Todas" ? 1 : 0) +
-    (finishFilter !== "Todos" ? 1 : 0) +
-    (lengthFilter !== "Todos" ? 1 : 0) +
-    (styleFilter !== "Todos" ? 1 : 0) +
-    (occasionFilter !== "Todas" ? 1 : 0) +
-    (query.trim() ? 1 : 0);
-
-  const clearAll = () => {
-    setFilter("Todas");
-    setShapeFilter("Todos");
-    setColorFilter("Todas");
-    setFinishFilter("Todos");
-    setLengthFilter("Todos");
-    setStyleFilter("Todos");
-    setOccasionFilter("Todas");
-    setQuery("");
-  };
-
-  // Sugestões para você — combina filtros ativos + escolhas do agendamento
-  const suggestions = useMemo(() => {
-    const hasHints =
-      activeFilters > 0 ||
-      (booking.shape && booking.shape.length > 0) ||
-      (booking.styles && booking.styles.length > 0) ||
-      (booking.colors && booking.colors.length > 0) ||
-      (booking.decorations && booking.decorations.length > 0);
-    if (!hasHints || gallery.length === 0) return [] as GalleryItem[];
-
-    const hints = {
-      shape: shapeFilter !== "Todos" ? shapeFilter : booking.shape || undefined,
-      styles: [
-        ...(styleFilter !== "Todos" ? [styleFilter] : []),
-        ...(filter !== "Todas" ? [filter] : []),
-        ...(booking.styles ?? []),
-      ],
-      colors: [
-        ...(colorFilter !== "Todas" ? [colorFilter] : []),
-        ...(booking.colors ?? []),
-      ],
-      decorations: [
-        ...(finishFilter !== "Todos" ? [finishFilter] : []),
-        ...(booking.decorations ?? []),
-      ],
-      occasions: occasionFilter !== "Todas" ? [occasionFilter] : [],
-    };
-
-    return gallery
-      .map((g) => ({ g, score: scoreSuggestion(g, hints) }))
-      .filter((x) => x.score > 0)
-      .sort((a, b) => b.score - a.score)
-      .slice(0, 6)
-      .map((x) => x.g);
-  }, [
-    gallery, activeFilters, booking, filter, shapeFilter, colorFilter,
-    finishFilter, styleFilter, occasionFilter,
-  ]);
-
 
   const chooseAsReference = (g: GalleryItem) => {
     update({
@@ -260,35 +156,9 @@ function Inspiracoes() {
     } catch {}
   };
 
-  const renderChipRow = (
-    label: string,
-    options: readonly string[] | string[],
-    value: string,
-    onChange: (v: string) => void,
-  ) => (
-    <div className="-mx-4 flex items-center gap-2 overflow-x-auto px-4 no-scrollbar">
-      <span className="shrink-0 text-[10px] uppercase tracking-[0.25em] text-white/40">
-        {label}
-      </span>
-      {options.map((o) => (
-        <button
-          key={o}
-          onClick={() => onChange(o)}
-          className={`shrink-0 rounded-full px-3 py-1.5 text-xs font-medium transition-all ${
-            value === o
-              ? "bg-[#F7A8BD] text-[#061A33]"
-              : "border border-white/15 bg-white/5 text-white/80 hover:bg-white/10"
-          }`}
-        >
-          {o}
-        </button>
-      ))}
-    </div>
-  );
-
   return (
     <div className="space-y-6">
-      <div className="px-1">
+      <div className="px-1 text-center">
         <p className="text-[10px] uppercase tracking-[0.3em] text-[color:var(--pink)]">Galeria</p>
         <h1 className="font-display text-3xl text-white">Inspirações</h1>
         <p className="mt-1 text-sm text-white/60">
@@ -296,126 +166,40 @@ function Inspiracoes() {
         </p>
       </div>
 
-      <div className="space-y-2">
-        <label className="flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-2.5">
-          <Search className="h-4 w-4 shrink-0 text-white/50" />
-          <input
-            type="search"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Busque por cor, estilo, formato ou ocasião"
-            className="w-full bg-transparent text-sm text-white placeholder:text-white/40 outline-none"
-          />
-          {query && (
-            <button
-              onClick={() => setQuery("")}
-              className="rounded-full p-1 text-white/50 hover:bg-white/10"
-              aria-label="Limpar busca"
-            >
-              <X className="h-3.5 w-3.5" />
-            </button>
-          )}
-        </label>
-
-        <div className="flex gap-2 pt-1">
-          {(["Todos", "Mãos", "Pés"] as const).map((b) => (
-            <button
-              key={b}
-              onClick={() => setBodyFilter(b)}
-              className={`rounded-full px-4 py-1.5 text-xs font-semibold transition-all ${
-                bodyFilter === b
-                  ? "bg-[#F7A8BD] text-[#061A33]"
-                  : "border border-white/15 bg-white/5 text-white/80 hover:bg-white/10"
-              }`}
-            >
-              {b}
-            </button>
-          ))}
+      <div className="space-y-3">
+        <div className="flex items-center justify-center gap-3">
+          {(["Mãos", "Pés"] as const).map((b) => {
+            const active = bodyFilter === b;
+            return (
+              <button
+                key={b}
+                onClick={() => setBodyFilter(b)}
+                aria-pressed={active}
+                className={`min-w-[120px] rounded-full px-6 py-2 text-sm font-semibold transition-all ${
+                  active
+                    ? "bg-[#F7A8BD] text-[#061A33] shadow-sm"
+                    : "border border-[#F7A8BD]/40 bg-white/10 text-white/90 hover:bg-white/15"
+                }`}
+              >
+                {b}
+              </button>
+            );
+          })}
         </div>
-
-        <div className="-mx-4 flex snap-x gap-2 overflow-x-auto scroll-smooth whitespace-nowrap px-4 pb-1 no-scrollbar">
-          {galleryCategories.map((c) => (
-            <button
-              key={c}
-              onClick={() => setFilter(c)}
-              className={`shrink-0 snap-start rounded-full px-4 py-2 text-sm font-medium transition-all ${
-                filter === c
-                  ? "bg-[#F7A8BD] text-[#061A33]"
-                  : "border border-white/15 bg-white/5 text-white hover:bg-white/10"
-              }`}
-            >
-              {c}
-            </button>
-          ))}
-        </div>
-        {renderChipRow("Cor", colors, colorFilter, setColorFilter)}
-        {renderChipRow("Formato", shapes, shapeFilter, setShapeFilter)}
-        {renderChipRow("Comprimento", lengths, lengthFilter, setLengthFilter)}
-        {renderChipRow("Estilo", styles, styleFilter, setStyleFilter)}
-        {renderChipRow("Acabamento", finishes, finishFilter, setFinishFilter)}
-        {occasions.length > 1 && renderChipRow("Ocasião", occasions, occasionFilter, setOccasionFilter)}
-        <div className="flex items-center justify-between px-1 pt-1 text-[11px] text-white/50">
-          <span>
-            {filtered.length} {filtered.length === 1 ? "modelo" : "modelos"}
-          </span>
-          {activeFilters > 0 && (
-            <button
-              onClick={clearAll}
-              className="rounded-full border border-white/15 bg-white/5 px-3 py-1 text-white/80 hover:bg-white/10"
-            >
-              Limpar filtros
-            </button>
-          )}
-        </div>
+        <p className="text-center text-[11px] text-white/50">
+          {filtered.length} {filtered.length === 1 ? "inspiração disponível" : "inspirações disponíveis"}
+        </p>
       </div>
 
-      {suggestions.length > 0 && (
-        <section className="space-y-2">
-          <div className="flex items-center justify-between px-1">
-            <h2 className="flex items-center gap-1.5 text-sm font-semibold text-white">
-              <Sparkles className="h-3.5 w-3.5 text-[color:var(--pink)]" />
-              Sugestões para você
-            </h2>
-            <span className="text-[10px] text-white/40">Com base nas suas escolhas</span>
-          </div>
-          <div className="-mx-4 flex gap-3 overflow-x-auto px-4 pb-1 no-scrollbar">
-            {suggestions.map((g) => (
-              <button
-                key={`sug-${g.id}`}
-                onClick={() => setSelected(g)}
-                className="w-32 shrink-0 overflow-hidden rounded-2xl bg-white text-left shadow-[0_8px_24px_-12px_rgba(0,0,0,0.5)]"
-              >
-                <NailImage src={g.imageUrl} alt={g.title} className="aspect-square" />
-                <div className="p-2">
-                  <p className="truncate text-[11px] font-semibold text-[#061A33]">{g.title}</p>
-                  <p className="truncate text-[10px] text-black/50">{g.category}</p>
-                </div>
-              </button>
-            ))}
-          </div>
-        </section>
-      )}
-
-      {filter !== "Todas" && categoryDescriptions[filter] && (
-        <p className="px-1 text-sm italic text-white/70">{categoryDescriptions[filter]}</p>
-      )}
-
       {filtered.length === 0 && (
         <div className="rounded-3xl border border-white/10 bg-white/5 p-6 text-center text-sm text-white/70">
-          Nenhum modelo com essa combinação. Tente ajustar os filtros ou a busca.
-        </div>
-      )}
-
-
-      {filtered.length === 0 && (
-        <div className="rounded-3xl border border-white/10 bg-white/5 p-6 text-center text-sm text-white/70">
-          Nenhum modelo com essa combinação. Tente ajustar os filtros.
+          Nenhuma inspiração disponível nesta categoria.
         </div>
       )}
 
       {/* Masonry via CSS columns */}
       <div
-        key={filter}
+        key={bodyFilter}
         className="animate-in fade-in [column-fill:_balance] columns-2 gap-4 sm:columns-3 lg:columns-4"
       >
         {filtered.map((g) => {
