@@ -488,7 +488,7 @@ function Inspiracoes() {
                   }}
                   className="mt-2.5 flex w-full items-center justify-center gap-1.5 rounded-full bg-[#25D366] py-2 text-xs font-semibold text-white shadow-sm"
                 >
-                  <MessageCircle className="h-3.5 w-3.5" /> Quero esta unha
+                  <MessageCircle className="h-3.5 w-3.5" /> Quero esta inspiração
                 </button>
               </div>
             </div>
@@ -573,7 +573,7 @@ function Inspiracoes() {
                   }}
                   className="flex w-full items-center justify-center gap-2 rounded-full bg-[#25D366] py-3 text-sm font-semibold text-white shadow-sm"
                 >
-                  <MessageCircle className="h-4 w-4" /> Quero esta unha
+                  <MessageCircle className="h-4 w-4" /> Quero esta inspiração
                 </button>
                 <button
                   onClick={() => chooseAsReference(selected)}
@@ -625,7 +625,7 @@ function Inspiracoes() {
         </div>
       )}
 
-      {/* "Quero esta unha" confirmation modal */}
+      {/* "Quero esta inspiração" confirmation modal */}
       {wantModel && (
         <div
           className="fixed inset-0 z-[70] flex items-end justify-center bg-black/80 p-0 sm:items-center sm:p-4 animate-in fade-in"
