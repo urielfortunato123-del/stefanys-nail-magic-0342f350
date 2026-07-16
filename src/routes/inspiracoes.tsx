@@ -217,11 +217,36 @@ function Inspiracoes() {
           })}
         </div>
         <p className="text-center text-[11px] text-white/50">
-          {filtered.length} {filtered.length === 1 ? "inspiração disponível" : "inspirações disponíveis"}
+          {loading
+            ? "Carregando inspirações…"
+            : `${filteredAll.length} ${filteredAll.length === 1 ? "inspiração disponível" : "inspirações disponíveis"}`}
         </p>
       </div>
 
-      {filtered.length === 0 && (
+      {loading && (
+        <div className="[column-fill:_balance] columns-2 gap-4 sm:columns-3 lg:columns-4">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <div
+              key={i}
+              className="mb-4 aspect-[4/5] w-full animate-pulse break-inside-avoid rounded-3xl bg-white/10"
+            />
+          ))}
+        </div>
+      )}
+
+      {!loading && error && (
+        <div className="rounded-3xl border border-white/10 bg-white/5 p-6 text-center text-sm text-white/70">
+          <p>Não foi possível carregar as inspirações.</p>
+          <button
+            onClick={() => setReloadKey((k) => k + 1)}
+            className="mt-3 rounded-full bg-[#F7A8BD] px-4 py-2 text-xs font-semibold text-[#061A33]"
+          >
+            Tentar novamente
+          </button>
+        </div>
+      )}
+
+      {!loading && !error && filteredAll.length === 0 && (
         <div className="rounded-3xl border border-white/10 bg-white/5 p-6 text-center text-sm text-white/70">
           Nenhuma inspiração disponível nesta categoria.
         </div>
