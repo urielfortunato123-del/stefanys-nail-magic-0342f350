@@ -14,6 +14,54 @@ export type Database = {
   }
   public: {
     Tables: {
+      inspiracoes: {
+        Row: {
+          ativo: boolean
+          atualizado_em: string
+          cor: string
+          criado_em: string
+          criado_por: string | null
+          estilo: string
+          formato: string
+          id: string
+          imagem_url: string
+          ordem: number
+          storage_path: string | null
+          tipo: string
+          titulo: string
+        }
+        Insert: {
+          ativo?: boolean
+          atualizado_em?: string
+          cor?: string
+          criado_em?: string
+          criado_por?: string | null
+          estilo?: string
+          formato?: string
+          id?: string
+          imagem_url: string
+          ordem?: number
+          storage_path?: string | null
+          tipo: string
+          titulo?: string
+        }
+        Update: {
+          ativo?: boolean
+          atualizado_em?: string
+          cor?: string
+          criado_em?: string
+          criado_por?: string | null
+          estilo?: string
+          formato?: string
+          id?: string
+          imagem_url?: string
+          ordem?: number
+          storage_path?: string | null
+          tipo?: string
+          titulo?: string
+        }
+        Relationships: []
+      }
       nail_models: {
         Row: {
           category: string

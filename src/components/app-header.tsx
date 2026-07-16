@@ -1,13 +1,32 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { Menu, MessageCircle } from "lucide-react";
+import { useRef } from "react";
 import { businessConfig, whatsappLink, LOGO_URL } from "@/config/business";
+import { supabase } from "@/integrations/supabase/client";
 const logo = LOGO_URL;
 
 export function AppHeader({ onMenu }: { onMenu?: () => void }) {
+  const nav = useNavigate();
+  const tapsRef = useRef<{ count: number; last: number }>({ count: 0, last: 0 });
+
+  async function onLogoTap(e: React.MouseEvent) {
+    const now = Date.now();
+    const s = tapsRef.current;
+    if (now - s.last > 1500) s.count = 0;
+    s.count += 1;
+    s.last = now;
+    if (s.count >= 7) {
+      e.preventDefault();
+      s.count = 0;
+      const { data } = await supabase.auth.getUser();
+      nav({ to: data.user ? "/admin" : "/admin/login" });
+    }
+  }
+
   return (
     <header className="sticky top-0 z-40 w-full border-b border-[color:var(--pink)]/25 bg-white/70 backdrop-blur-md">
       <div className="mx-auto flex max-w-2xl items-center gap-3 px-4 py-3">
-        <Link to="/" className="flex min-w-0 items-center gap-2">
+        <Link to="/" className="flex min-w-0 items-center gap-2" onClick={onLogoTap}>
           <img
             src={logo}
             alt="Stefany Próspero Nail Designer"

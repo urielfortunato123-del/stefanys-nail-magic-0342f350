@@ -17,8 +17,10 @@ import { Route as InspiracoesRouteImport } from './routes/inspiracoes'
 import { Route as ContatoRouteImport } from './routes/contato'
 import { Route as AreaAtendidaRouteImport } from './routes/area-atendida'
 import { Route as AgendarRouteImport } from './routes/agendar'
+import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AgendarSucessoRouteImport } from './routes/agendar.sucesso'
+import { Route as AdminLoginRouteImport } from './routes/admin.login'
 import { Route as AdminGaleriaRouteImport } from './routes/admin.galeria'
 import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
 import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]/list-tools'
@@ -64,6 +66,11 @@ const AgendarRoute = AgendarRouteImport.update({
   path: '/agendar',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -74,10 +81,15 @@ const AgendarSucessoRoute = AgendarSucessoRouteImport.update({
   path: '/sucesso',
   getParentRoute: () => AgendarRoute,
 } as any)
+const AdminLoginRoute = AdminLoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminGaleriaRoute = AdminGaleriaRouteImport.update({
-  id: '/admin/galeria',
-  path: '/admin/galeria',
-  getParentRoute: () => rootRouteImport,
+  id: '/galeria',
+  path: '/galeria',
+  getParentRoute: () => AdminRoute,
 } as any)
 const Char91DotwellKnownChar93OauthProtectedResourceRoute =
   Char91DotwellKnownChar93OauthProtectedResourceRouteImport.update({
@@ -100,6 +112,7 @@ const Char91DotmcpChar93InvokeToolToolRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRouteWithChildren
   '/agendar': typeof AgendarRouteWithChildren
   '/area-atendida': typeof AreaAtendidaRoute
   '/contato': typeof ContatoRoute
@@ -111,11 +124,13 @@ export interface FileRoutesByFullPath {
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/admin/galeria': typeof AdminGaleriaRoute
+  '/admin/login': typeof AdminLoginRoute
   '/agendar/sucesso': typeof AgendarSucessoRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRouteWithChildren
   '/agendar': typeof AgendarRouteWithChildren
   '/area-atendida': typeof AreaAtendidaRoute
   '/contato': typeof ContatoRoute
@@ -127,12 +142,14 @@ export interface FileRoutesByTo {
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/admin/galeria': typeof AdminGaleriaRoute
+  '/admin/login': typeof AdminLoginRoute
   '/agendar/sucesso': typeof AgendarSucessoRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/admin': typeof AdminRouteWithChildren
   '/agendar': typeof AgendarRouteWithChildren
   '/area-atendida': typeof AreaAtendidaRoute
   '/contato': typeof ContatoRoute
@@ -144,6 +161,7 @@ export interface FileRoutesById {
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/admin/galeria': typeof AdminGaleriaRoute
+  '/admin/login': typeof AdminLoginRoute
   '/agendar/sucesso': typeof AgendarSucessoRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
 }
@@ -151,6 +169,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/admin'
     | '/agendar'
     | '/area-atendida'
     | '/contato'
@@ -162,11 +181,13 @@ export interface FileRouteTypes {
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
     | '/admin/galeria'
+    | '/admin/login'
     | '/agendar/sucesso'
     | '/.mcp/invoke-tool/$tool'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/admin'
     | '/agendar'
     | '/area-atendida'
     | '/contato'
@@ -178,11 +199,13 @@ export interface FileRouteTypes {
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
     | '/admin/galeria'
+    | '/admin/login'
     | '/agendar/sucesso'
     | '/.mcp/invoke-tool/$tool'
   id:
     | '__root__'
     | '/'
+    | '/admin'
     | '/agendar'
     | '/area-atendida'
     | '/contato'
@@ -194,12 +217,14 @@ export interface FileRouteTypes {
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
     | '/admin/galeria'
+    | '/admin/login'
     | '/agendar/sucesso'
     | '/.mcp/invoke-tool/$tool'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdminRoute: typeof AdminRouteWithChildren
   AgendarRoute: typeof AgendarRouteWithChildren
   AreaAtendidaRoute: typeof AreaAtendidaRoute
   ContatoRoute: typeof ContatoRoute
@@ -210,7 +235,6 @@ export interface RootRouteChildren {
   SobreRoute: typeof SobreRoute
   Char91DotmcpChar93ListToolsRoute: typeof Char91DotmcpChar93ListToolsRoute
   Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
-  AdminGaleriaRoute: typeof AdminGaleriaRoute
   Char91DotmcpChar93InvokeToolToolRoute: typeof Char91DotmcpChar93InvokeToolToolRoute
 }
 
@@ -272,6 +296,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AgendarRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -286,12 +317,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AgendarSucessoRouteImport
       parentRoute: typeof AgendarRoute
     }
+    '/admin/login': {
+      id: '/admin/login'
+      path: '/login'
+      fullPath: '/admin/login'
+      preLoaderRoute: typeof AdminLoginRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/galeria': {
       id: '/admin/galeria'
-      path: '/admin/galeria'
+      path: '/galeria'
       fullPath: '/admin/galeria'
       preLoaderRoute: typeof AdminGaleriaRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof AdminRoute
     }
     '/.well-known/oauth-protected-resource': {
       id: '/.well-known/oauth-protected-resource'
@@ -317,6 +355,18 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface AdminRouteChildren {
+  AdminGaleriaRoute: typeof AdminGaleriaRoute
+  AdminLoginRoute: typeof AdminLoginRoute
+}
+
+const AdminRouteChildren: AdminRouteChildren = {
+  AdminGaleriaRoute: AdminGaleriaRoute,
+  AdminLoginRoute: AdminLoginRoute,
+}
+
+const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
+
 interface AgendarRouteChildren {
   AgendarSucessoRoute: typeof AgendarSucessoRoute
 }
@@ -330,6 +380,7 @@ const AgendarRouteWithChildren =
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdminRoute: AdminRouteWithChildren,
   AgendarRoute: AgendarRouteWithChildren,
   AreaAtendidaRoute: AreaAtendidaRoute,
   ContatoRoute: ContatoRoute,
@@ -341,7 +392,6 @@ const rootRouteChildren: RootRouteChildren = {
   Char91DotmcpChar93ListToolsRoute: Char91DotmcpChar93ListToolsRoute,
   Char91DotwellKnownChar93OauthProtectedResourceRoute:
     Char91DotwellKnownChar93OauthProtectedResourceRoute,
-  AdminGaleriaRoute: AdminGaleriaRoute,
   Char91DotmcpChar93InvokeToolToolRoute: Char91DotmcpChar93InvokeToolToolRoute,
 }
 export const routeTree = rootRouteImport
