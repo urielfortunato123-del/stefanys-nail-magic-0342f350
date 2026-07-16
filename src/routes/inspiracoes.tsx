@@ -84,6 +84,7 @@ function NailImage({
 
 function Inspiracoes() {
   const [filter, setFilter] = useState<string>("Todas");
+  const [bodyFilter, setBodyFilter] = useState<"Todos" | "Mãos" | "Pés">("Todos");
   const [shapeFilter, setShapeFilter] = useState<string>("Todos");
   const [colorFilter, setColorFilter] = useState<string>("Todas");
   const [finishFilter, setFinishFilter] = useState<string>("Todos");
@@ -150,6 +151,8 @@ function Inspiracoes() {
     () =>
       gallery.filter(
         (g) =>
+          (bodyFilter === "Todos" ||
+            (bodyFilter === "Pés" ? g.bodyPart === "feet" : g.bodyPart !== "feet")) &&
           (filter === "Todas" || g.category === filter) &&
           (shapeFilter === "Todos" || g.shape === shapeFilter) &&
           (colorFilter === "Todas" || g.mainColor === colorFilter) &&
@@ -159,7 +162,7 @@ function Inspiracoes() {
           (occasionFilter === "Todas" || (g.occasions ?? []).includes(occasionFilter)) &&
           matchesQuery(g, query),
       ),
-    [gallery, filter, shapeFilter, colorFilter, finishFilter, lengthFilter, styleFilter, occasionFilter, query],
+    [gallery, bodyFilter, filter, shapeFilter, colorFilter, finishFilter, lengthFilter, styleFilter, occasionFilter, query],
   );
 
   const activeFilters =
@@ -313,6 +316,22 @@ function Inspiracoes() {
             </button>
           )}
         </label>
+
+        <div className="flex gap-2 pt-1">
+          {(["Todos", "Mãos", "Pés"] as const).map((b) => (
+            <button
+              key={b}
+              onClick={() => setBodyFilter(b)}
+              className={`rounded-full px-4 py-1.5 text-xs font-semibold transition-all ${
+                bodyFilter === b
+                  ? "bg-[#F7A8BD] text-[#061A33]"
+                  : "border border-white/15 bg-white/5 text-white/80 hover:bg-white/10"
+              }`}
+            >
+              {b}
+            </button>
+          ))}
+        </div>
 
         <div className="-mx-4 flex snap-x gap-2 overflow-x-auto scroll-smooth whitespace-nowrap px-4 pb-1 no-scrollbar">
           {galleryCategories.map((c) => (
