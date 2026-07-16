@@ -1,4 +1,10 @@
-export type NailShape = "Almond" | "Bailarina" | "Stiletto" | "Quadrada";
+export type NailShape =
+  | "Amendoada"
+  | "Almond"
+  | "Bailarina"
+  | "Stiletto"
+  | "Quadrada"
+  | "Oval";
 export type NailFinish =
   | "Glitter"
   | "Encapsulado"
@@ -34,6 +40,7 @@ export interface GalleryItem {
 
 export const galleryCategories = [
   "Todas",
+  "Inspirações",
   "Francesinha",
   "Decoradas",
   "Coloridas",
@@ -43,6 +50,7 @@ export const galleryCategories = [
 ] as const;
 
 export const categoryDescriptions: Record<string, string> = {
+  Inspirações: "Inspirações da Stefany, organizadas pelo formato da unha.",
   Francesinha: "Elegância atemporal para quem gosta de unhas sofisticadas e delicadas.",
   Decoradas: "Unhas personalizadas feitas à mão com riqueza de detalhes.",
   Coloridas: "Modelos modernos com cores vibrantes e acabamento premium.",
@@ -51,8 +59,9 @@ export const categoryDescriptions: Record<string, string> = {
   "Nail Art": "Arte feita à mão para quem ama exclusividade.",
 };
 
-// Ordem visual: primeiro Luxo (mais sofisticado), depois Francesinhas, Decoradas, Coloridas, Nail Art, Minimalistas.
+// Ordem visual das categorias na página de inspirações.
 export const categoryOrder: Record<string, number> = {
+  Inspirações: 0,
   Luxo: 1,
   Francesinha: 2,
   Decoradas: 3,
@@ -61,190 +70,51 @@ export const categoryOrder: Record<string, number> = {
   Minimalistas: 6,
 };
 
-const img = (n: string) => `https://res.cloudinary.com/dcii6r5op/image/upload/v1784128${n}/promaxx/`;
+// Formatos disponíveis nos filtros de inspiração (mãos).
+export const inspirationShapes = [
+  "Amendoada",
+  "Quadrada",
+  "Bailarina",
+  "Oval",
+  "Stiletto",
+] as const;
+export type InspirationShape = (typeof inspirationShapes)[number];
+
+// Inspirações de mãos — cada cartão é identificado somente pelo formato.
+const handInspirations: Array<{ url: string; shape: InspirationShape }> = [
+  { url: "https://res.cloudinary.com/dcii6r5op/image/upload/v1784230618/promaxx/ke7mcmwkq5bdeq3gulnw.jpg", shape: "Amendoada" },
+  { url: "https://res.cloudinary.com/dcii6r5op/image/upload/v1784230619/promaxx/wpbjpgaydr2zxjiza3sd.jpg", shape: "Amendoada" },
+  { url: "https://res.cloudinary.com/dcii6r5op/image/upload/v1784230620/promaxx/i8ntvl6jeaw2mhkfidwv.jpg", shape: "Quadrada" },
+  { url: "https://res.cloudinary.com/dcii6r5op/image/upload/v1784230621/promaxx/a4gblkinnttoiixyy7bj.jpg", shape: "Bailarina" },
+  { url: "https://res.cloudinary.com/dcii6r5op/image/upload/v1784230622/promaxx/wb67udzysmyq1cu649j5.jpg", shape: "Amendoada" },
+  { url: "https://res.cloudinary.com/dcii6r5op/image/upload/v1784230623/promaxx/evtrhk3lxciy8qrphcjv.jpg", shape: "Amendoada" },
+  { url: "https://res.cloudinary.com/dcii6r5op/image/upload/v1784230625/promaxx/amwebzwsac5yyt8hdjj7.jpg", shape: "Oval" },
+  { url: "https://res.cloudinary.com/dcii6r5op/image/upload/v1784230626/promaxx/yr28wamdwsayupzqthjk.jpg", shape: "Stiletto" },
+  { url: "https://res.cloudinary.com/dcii6r5op/image/upload/v1784230627/promaxx/y6tibniyaeekz0yyxdbz.jpg", shape: "Bailarina" },
+  { url: "https://res.cloudinary.com/dcii6r5op/image/upload/v1784230629/promaxx/iesu4yshpubnpatkwkjw.jpg", shape: "Amendoada" },
+  { url: "https://res.cloudinary.com/dcii6r5op/image/upload/v1784230630/promaxx/wtcw0tia1dbd5gph4wec.jpg", shape: "Oval" },
+  { url: "https://res.cloudinary.com/dcii6r5op/image/upload/v1784230632/promaxx/kabfm8hifd7s3gmamwsx.jpg", shape: "Bailarina" },
+  { url: "https://res.cloudinary.com/dcii6r5op/image/upload/v1784230633/promaxx/od1bxqvioij9spwdze14.jpg", shape: "Stiletto" },
+  { url: "https://res.cloudinary.com/dcii6r5op/image/upload/v1784230634/promaxx/xofk5jg89w0pwejg9xfa.jpg", shape: "Stiletto" },
+];
 
 export const gallery: GalleryItem[] = [
-  // Luxo
-  {
-    id: "luxo-pedrarias",
-    title: "Pedrarias",
-    category: "Luxo",
-    imageUrl: img("443") + "c0xfyjjjs44toab3ctpv.jpg",
-    colors: ["Nude", "Cristal"],
-    mainColor: "Nude com cristais",
-    shape: "Almond",
-    finish: "Pedrarias",
-    duration: "3h",
-    durability: "até 25 dias",
-    featured: true,
-  },
-  {
-    id: "luxo-3d",
-    title: "Aplicações 3D",
-    category: "Luxo",
-    imageUrl: img("444") + "nayorqcze5ztckgdlhtq.jpg",
-    colors: ["Branco", "Dourado"],
-    mainColor: "Branco Pérola",
-    shape: "Bailarina",
-    finish: "3D",
-    duration: "3h",
-    durability: "até 25 dias",
-    featured: true,
-  },
-
-  // Francesinha
-  {
-    id: "francesinha-quadrada",
-    title: "Francesinha tradicional quadrada",
-    category: "Francesinha",
-    imageUrl: img("433") + "dgkrjr6iyz6v2b5ghga2.jpg",
-    colors: ["Branco", "Nude"],
-    mainColor: "Branco Clássico",
-    shape: "Quadrada",
-    finish: "Francesinha",
-    duration: "2h30",
-    durability: "até 25 dias",
-  },
-  {
-    id: "francesinha-almond",
-    title: "Francesinha almond",
-    category: "Francesinha",
-    imageUrl: img("434") + "sd58c1w48zc5mxjzta2p.jpg",
-    colors: ["Branco", "Nude"],
-    mainColor: "Nude Rosé",
-    shape: "Almond",
-    finish: "Francesinha",
-    duration: "2h30",
-    durability: "até 25 dias",
-  },
-  {
-    id: "francesinha-branca-classica",
-    title: "Francesinha branca clássica",
-    category: "Francesinha",
-    imageUrl: img("435") + "ywosybiovaxxoo1ex6af.jpg",
-    colors: ["Branco"],
-    mainColor: "Branco Leitoso",
-    shape: "Almond",
-    finish: "Francesinha",
-    duration: "2h30",
-    durability: "até 25 dias",
-  },
-
-  // Decoradas
-  {
-    id: "decorada-flores-roxas",
-    title: "Flores roxas",
-    category: "Decoradas",
-    imageUrl: img("438") + "bsin53xsexhuudackkhl.jpg",
-    colors: ["Roxo", "Branco"],
-    mainColor: "Roxo Lavanda",
-    shape: "Almond",
+  ...handInspirations.map<GalleryItem>((it, i) => ({
+    id: `insp-${i + 1}`,
+    title: it.shape,
+    category: "Inspirações",
+    imageUrl: it.url,
+    colors: [],
+    mainColor: "",
+    shape: it.shape,
     finish: "Pintura Artística",
-    duration: "3h",
-    durability: "até 25 dias",
-  },
-  {
-    id: "decorada-glitter-rosa",
-    title: "Glitter rosa",
-    category: "Decoradas",
-    imageUrl: img("439") + "q2roq9gq3c2jbcayi0kn.jpg",
-    colors: ["Rosa", "Prata"],
-    mainColor: "Rosa Glitter",
-    shape: "Almond",
-    finish: "Glitter",
     duration: "2h30",
     durability: "até 25 dias",
-  },
-
-  // Coloridas
-  {
-    id: "colorida-rosa-neon",
-    title: "Rosa Neon",
-    category: "Coloridas",
-    imageUrl: img("440") + "h56dynag30tbwumyayhz.jpg",
-    colors: ["Rosa"],
-    mainColor: "Pink Neon",
-    shape: "Bailarina",
-    finish: "Encapsulado",
-    duration: "2h30",
-    durability: "até 25 dias",
-  },
-  {
-    id: "colorida-branco-rose",
-    title: "Branco Rosé",
-    category: "Coloridas",
-    imageUrl: img("449") + "a7ckoxuafylbfg4pbnp9.jpg",
-    colors: ["Branco", "Rosa"],
-    mainColor: "Branco Rosé",
-    shape: "Almond",
-    finish: "Encapsulado",
-    duration: "2h30",
-    durability: "até 25 dias",
-  },
-
-  // Nail Art
-  {
-    id: "nailart-borboletas-azuis",
-    title: "Borboletas Azuis",
-    category: "Nail Art",
-    imageUrl: img("436") + "ll7vv76dm9raij4ps2ir.jpg",
-    colors: ["Azul Royal", "Branco"],
-    mainColor: "Azul Royal",
-    shape: "Almond",
-    finish: "Pintura Artística",
-    duration: "3h",
-    durability: "até 25 dias",
-  },
-  {
-    id: "nailart-stitch",
-    title: "Azul Stitch",
-    category: "Nail Art",
-    imageUrl: img("442") + "oj1fzhab8dn4m36kufnz.jpg",
-    colors: ["Azul", "Branco"],
-    mainColor: "Azul Stitch",
-    shape: "Almond",
-    finish: "Pintura Artística",
-    duration: "3h",
-    durability: "até 25 dias",
-  },
-  {
-    id: "nailart-lacos",
-    title: "Laços",
-    category: "Nail Art",
-    imageUrl: img("448") + "qn0nsx4hdz6kx1oxdmap.jpg",
-    colors: ["Rosa", "Branco"],
-    mainColor: "Rosa Bebê",
-    shape: "Almond",
-    finish: "Pintura Artística",
-    duration: "3h",
-    durability: "até 25 dias",
-  },
-
-  // Minimalistas
-  {
-    id: "minimalista-nude",
-    title: "Nude",
-    category: "Minimalistas",
-    imageUrl: img("445") + "mnmpqyfnnzlsx9svklgs.jpg",
-    colors: ["Nude"],
-    mainColor: "Nude",
-    shape: "Almond",
-    finish: "Encapsulado",
-    duration: "2h",
-    durability: "até 25 dias",
-  },
-  {
-    id: "minimalista-branco-leitoso",
-    title: "Branco Leitoso",
-    category: "Minimalistas",
-    imageUrl: img("446") + "ks4syuhuttkvdtjkvecg.jpg",
-    colors: ["Branco"],
-    mainColor: "Branco Leitoso",
-    shape: "Quadrada",
-    finish: "Encapsulado",
-    duration: "2h",
-    durability: "até 25 dias",
-  },
+    bodyPart: "hands",
+    style: "Inspiração",
+    tags: [it.shape.toLowerCase()],
+    description: `Inspiração no formato ${it.shape}.`,
+  })),
   // Pedicure
   ...[
     { url: "/__l5e/assets-v1/3035256d-b0c5-4f7c-a9a7-f67b230459cc/pes-1.jpg", title: "Pedicure 1" },
@@ -262,7 +132,7 @@ export const gallery: GalleryItem[] = [
   ].map<GalleryItem>((it, i) => ({
     id: `pes-${i + 1}`,
     title: it.title,
-    category: it.category ?? "Decoradas",
+    category: (it as { category?: string }).category ?? "Decoradas",
     imageUrl: it.url,
     colors: ["Variado"],
     mainColor: "Variado",
@@ -271,13 +141,7 @@ export const gallery: GalleryItem[] = [
     duration: "1h30",
     durability: "até 20 dias",
     bodyPart: "feet",
-    isProcess: it.isProcess,
-    description: it.description,
+    isProcess: (it as { isProcess?: boolean }).isProcess,
+    description: (it as { description?: string }).description,
   })),
 ];
-
-
-gallery.sort((a, b) => {
-  if (!!b.featured !== !!a.featured) return b.featured ? 1 : -1;
-  return (categoryOrder[a.category] ?? 99) - (categoryOrder[b.category] ?? 99);
-});
