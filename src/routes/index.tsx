@@ -160,6 +160,11 @@ function Home() {
                 className="aspect-square w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
                 onError={(e) => { (e.currentTarget as HTMLImageElement).src = "/images/nails/placeholder.jpg"; }}
               />
+              {g.isProcess && (
+                <span className="absolute left-2 top-2 rounded-full bg-[color:var(--pink)] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-[#08213D] shadow">
+                  Processo
+                </span>
+              )}
             </button>
           ))}
         </div>
