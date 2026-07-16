@@ -107,28 +107,77 @@
   }
 
   html, body {
-    background-color: var(--color-background);
-    color: var(--color-foreground);
+    color: #061A33;
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
+    background-color: #FDF6F3;
+  }
+
+  /* Decorative fixed background: photo + white translucent veil + subtle blur */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -2;
+    background-image: url("/__l5e/assets-v1/0ca8eacf-d6ac-4b38-9e9c-4f8c442859ab/stefany-bg.png");
+    background-size: cover;
+    background-position: center 25%;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    filter: blur(3px) saturate(1.05);
+    transform: scale(1.03); /* hide blur edges */
+    pointer-events: none;
+  }
+  body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background-color: rgba(255, 255, 255, 0.86);
+    pointer-events: none;
   }
 
   h1, h2, h3, .font-display {
     font-family: var(--font-display);
     letter-spacing: -0.01em;
+    color: #061A33;
   }
+
+  /* Text-color overrides so existing dark-theme white text stays readable
+     on top of the new light photo background. */
+  .text-white { color: #061A33 !important; }
+  .text-white\/90 { color: rgba(6, 26, 51, 0.92) !important; }
+  .text-white\/80 { color: rgba(6, 26, 51, 0.85) !important; }
+  .text-white\/70 { color: rgba(6, 26, 51, 0.72) !important; }
+  .text-white\/60 { color: rgba(6, 26, 51, 0.62) !important; }
+  .text-white\/50 { color: rgba(6, 26, 51, 0.52) !important; }
+  .text-white\/40 { color: rgba(6, 26, 51, 0.45) !important; }
+  .text-foreground { color: #061A33 !important; }
+
+  /* Preserve navy text on pink-filled surfaces (buttons keep readable contrast). */
+  .bg-\[color\:var\(--pink\)\] .text-white,
+  [class*="bg-[color:var(--pink)]"] .text-white { color: #061A33 !important; }
+
+  /* Soften harsh white borders on the light background. */
+  .border-white\/5 { border-color: rgba(247, 168, 189, 0.25) !important; }
+  .border-white\/10 { border-color: rgba(247, 168, 189, 0.30) !important; }
+  .border-white\/20 { border-color: rgba(247, 168, 189, 0.40) !important; }
+
+  /* Backgrounds that were opaque navy surfaces become white glass. */
+  .bg-\[\#08213D\] { background-color: rgba(255, 255, 255, 0.75) !important; }
 }
 
 @utility glass-card {
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.01));
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 20px 60px -30px rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(6px);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.7));
+  border: 1px solid rgba(247, 168, 189, 0.35);
+  box-shadow: 0 12px 40px -18px rgba(247, 168, 189, 0.35), 0 4px 16px -8px rgba(6, 26, 51, 0.08);
+  backdrop-filter: blur(10px) saturate(1.1);
+  border-radius: 1.25rem;
 }
 
 @utility pink-glow {
-  box-shadow: 0 10px 40px -10px rgba(247, 168, 189, 0.5);
+  box-shadow: 0 10px 40px -10px rgba(247, 168, 189, 0.55);
 }
 
 @keyframes shimmer {
@@ -137,7 +186,7 @@
 }
 
 @utility shimmer-text {
-  background: linear-gradient(90deg, #FFD4DF 0%, #F7A8BD 30%, #D8BE8B 50%, #F7A8BD 70%, #FFD4DF 100%);
+  background: linear-gradient(90deg, #C08497 0%, #F7A8BD 30%, #D8BE8B 50%, #F7A8BD 70%, #C08497 100%);
   background-size: 200% 100%;
   -webkit-background-clip: text;
   background-clip: text;
@@ -163,6 +212,8 @@ html, body {
 
 input, textarea, select {
   font-size: 16px; /* evita zoom automático no iOS ao focar */
+  color: #061A33;
 }
+
 
 
