@@ -82,6 +82,8 @@ function NailImage({
   );
 }
 
+const PAGE_SIZE = 6;
+
 function Inspiracoes() {
   const [bodyFilter, setBodyFilter] = useState<"Mãos" | "Pés">("Mãos");
   const [selected, setSelected] = useState<GalleryItem | null>(null);
@@ -92,19 +94,37 @@ function Inspiracoes() {
   const [hideTip, setHideTipState] = useState(false);
   const [showTip, setShowTip] = useState(false);
   const [gallery, setGallery] = useState<GalleryItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+  const [reloadKey, setReloadKey] = useState(0);
+  const [visible, setVisible] = useState<Record<"Mãos" | "Pés", number>>({ Mãos: PAGE_SIZE, Pés: PAGE_SIZE });
   const { favs, toggle } = useFavorites();
   const { data: booking, update } = useBooking();
   const navigate = useNavigate();
 
   useEffect(() => {
     let ok = true;
-    loadGallery().then((g) => {
-      if (ok) setGallery(g);
-    });
+    const controller = new AbortController();
+    setLoading(true);
+    setError(false);
+    loadGallery(controller.signal)
+      .then((g) => {
+        if (!ok) return;
+        setGallery(g);
+        if (g.length === 0) setError(true);
+      })
+      .catch((e) => {
+        console.error("Erro ao carregar inspirações:", e);
+        if (ok) setError(true);
+      })
+      .finally(() => {
+        if (ok) setLoading(false);
+      });
     return () => {
       ok = false;
+      controller.abort();
     };
-  }, []);
+  }, [reloadKey]);
 
   useEffect(() => {
     if (wantModel) {
@@ -114,13 +134,22 @@ function Inspiracoes() {
     }
   }, [wantModel]);
 
-  const filtered = useMemo(
+  const filteredAll = useMemo(
     () =>
       gallery.filter((g) =>
         bodyFilter === "Pés" ? g.bodyPart === "feet" : g.bodyPart !== "feet",
       ),
     [gallery, bodyFilter],
   );
+  const filtered = useMemo(
+    () => filteredAll.slice(0, visible[bodyFilter]),
+    [filteredAll, visible, bodyFilter],
+  );
+  const hasMore = filtered.length < filteredAll.length;
+
+  const loadMore = () =>
+    setVisible((v) => ({ ...v, [bodyFilter]: v[bodyFilter] + PAGE_SIZE }));
+
 
   const chooseAsReference = (g: GalleryItem) => {
     update({
