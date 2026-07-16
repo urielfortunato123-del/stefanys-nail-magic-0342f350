@@ -151,6 +151,8 @@ function Inspiracoes() {
     () =>
       gallery.filter(
         (g) =>
+          (bodyFilter === "Todos" ||
+            (bodyFilter === "Pés" ? g.bodyPart === "feet" : g.bodyPart !== "feet")) &&
           (filter === "Todas" || g.category === filter) &&
           (shapeFilter === "Todos" || g.shape === shapeFilter) &&
           (colorFilter === "Todas" || g.mainColor === colorFilter) &&
@@ -160,7 +162,7 @@ function Inspiracoes() {
           (occasionFilter === "Todas" || (g.occasions ?? []).includes(occasionFilter)) &&
           matchesQuery(g, query),
       ),
-    [gallery, filter, shapeFilter, colorFilter, finishFilter, lengthFilter, styleFilter, occasionFilter, query],
+    [gallery, bodyFilter, filter, shapeFilter, colorFilter, finishFilter, lengthFilter, styleFilter, occasionFilter, query],
   );
 
   const activeFilters =
