@@ -245,13 +245,13 @@ export const gallery: GalleryItem[] = [
     durability: "até 25 dias",
   },
   // Pedicure
-  ...(([
+  ...[
     "/__l5e/assets-v1/3035256d-b0c5-4f7c-a9a7-f67b230459cc/pes-1.jpg",
     "/__l5e/assets-v1/69ba3883-20f9-4a4f-97fa-ab357af501ac/pes-2.jpg",
     "/__l5e/assets-v1/683b025f-318f-44d1-8f61-1a8ce930e683/pes-3.jpg",
     "/__l5e/assets-v1/dd611551-4f3a-46d1-a935-5131c86f57a8/pes-4.jpg",
     "/__l5e/assets-v1/806400f4-6a6b-4c21-a82f-f266237553c9/pes-5.jpg",
-  ] as const).map((url, i): GalleryItem => ({
+  ].map<GalleryItem>((url, i) => ({
     id: `pes-${i + 1}`,
     title: `Pedicure ${i + 1}`,
     category: "Decoradas",
