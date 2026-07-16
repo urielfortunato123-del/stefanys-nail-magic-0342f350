@@ -29,8 +29,45 @@ const quickLinks: { to: string; label: string; icon: typeof HomeIcon }[] = [
   { to: "/area-atendida", label: "Área atendida", icon: MapPin },
   { to: "/sobre", label: "Sobre a Stefany", icon: Info },
 ];
+type BodyFilter = "Todos" | "Mãos" | "Pés";
 
 function Home() {
+  const [bodyFilter, setBodyFilter] = useState<BodyFilter>("Todos");
+  const [lightboxIdx, setLightboxIdx] = useState<number | null>(null);
+
+  const filteredWorks = useMemo(() => {
+    const isFeet = (g: GalleryItem) => g.bodyPart === "feet";
+    if (bodyFilter === "Mãos") return gallery.filter((g) => !isFeet(g));
+    if (bodyFilter === "Pés") return gallery.filter(isFeet);
+    return gallery;
+  }, [bodyFilter]);
+
+  const preview = useMemo(() => filteredWorks.slice(0, 8), [filteredWorks]);
+  const current = lightboxIdx != null ? preview[lightboxIdx] : null;
+
+  const next = () => setLightboxIdx((i) => (i == null ? i : (i + 1) % preview.length));
+  const prev = () => setLightboxIdx((i) => (i == null ? i : (i - 1 + preview.length) % preview.length));
+
+  useEffect(() => {
+    if (lightboxIdx == null) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setLightboxIdx(null);
+      if (e.key === "ArrowRight") next();
+      if (e.key === "ArrowLeft") prev();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [lightboxIdx, preview.length]);
+
+  const touchX = useRef<number | null>(null);
+  const onTouchStart = (e: React.TouchEvent) => { touchX.current = e.touches[0].clientX; };
+  const onTouchEnd = (e: React.TouchEvent) => {
+    if (touchX.current == null) return;
+    const dx = e.changedTouches[0].clientX - touchX.current;
+    if (Math.abs(dx) > 40) { dx < 0 ? next() : prev(); }
+    touchX.current = null;
+  };
+
   return (
     <div className="space-y-8">
       {/* Hero */}
