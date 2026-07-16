@@ -76,8 +76,11 @@ function NailImage({
       alt={alt}
       loading="lazy"
       decoding="async"
+      width={800}
+      height={1000}
       onError={() => setErrored(true)}
       className={`w-full bg-white object-cover ${className}`}
+      style={{ aspectRatio: "4 / 5" }}
     />
   );
 }
