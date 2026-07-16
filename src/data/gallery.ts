@@ -22,6 +22,7 @@ export interface GalleryItem {
   durability: string;
   featured?: boolean;
   bodyPart?: BodyPart; // default "hands" quando ausente
+  isProcess?: boolean; // marca cartões de etapa/processo (não resultado final)
   // opcionais (populados via banco; itens estáticos ficam com defaults)
   length?: string;
   secondaryColor?: string | null;
