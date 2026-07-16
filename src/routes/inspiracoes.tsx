@@ -83,15 +83,7 @@ function NailImage({
 }
 
 function Inspiracoes() {
-  const [filter, setFilter] = useState<string>("Todas");
-  const [bodyFilter, setBodyFilter] = useState<"Todos" | "Mãos" | "Pés">("Todos");
-  const [shapeFilter, setShapeFilter] = useState<string>("Todos");
-  const [colorFilter, setColorFilter] = useState<string>("Todas");
-  const [finishFilter, setFinishFilter] = useState<string>("Todos");
-  const [lengthFilter, setLengthFilter] = useState<string>("Todos");
-  const [styleFilter, setStyleFilter] = useState<string>("Todos");
-  const [occasionFilter, setOccasionFilter] = useState<string>("Todas");
-  const [query, setQuery] = useState<string>("");
+  const [bodyFilter, setBodyFilter] = useState<"Mãos" | "Pés">("Mãos");
   const [selected, setSelected] = useState<GalleryItem | null>(null);
   const [fullscreen, setFullscreen] = useState<GalleryItem | null>(null);
   const [wantModel, setWantModel] = useState<GalleryItem | null>(null);
