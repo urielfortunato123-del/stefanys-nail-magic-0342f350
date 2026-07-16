@@ -335,6 +335,19 @@ function Inspiracoes() {
         })}
       </div>
 
+      {hasMore && !loading && (
+        <div className="flex justify-center pt-2">
+          <button
+            onClick={loadMore}
+            className="rounded-full border border-[#F7A8BD]/50 bg-white/10 px-6 py-2 text-sm font-semibold text-white hover:bg-white/15"
+          >
+            Carregar mais
+          </button>
+        </div>
+      )}
+
+
+
       {/* Detail modal */}
       {selected && (
         <div
