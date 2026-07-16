@@ -84,6 +84,7 @@ function NailImage({
 
 function Inspiracoes() {
   const [filter, setFilter] = useState<string>("Todas");
+  const [bodyFilter, setBodyFilter] = useState<"Todos" | "Mãos" | "Pés">("Todos");
   const [shapeFilter, setShapeFilter] = useState<string>("Todos");
   const [colorFilter, setColorFilter] = useState<string>("Todas");
   const [finishFilter, setFinishFilter] = useState<string>("Todos");
