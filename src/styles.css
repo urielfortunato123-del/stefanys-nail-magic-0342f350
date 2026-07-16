@@ -216,3 +216,20 @@ input, textarea, select {
 
 
 
+
+.select-dark {
+  width: 100%;
+  border-radius: 1rem;
+  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.06);
+  padding: 0.6rem 0.75rem;
+  color: #fff;
+  font-size: 14px;
+  outline: none;
+}
+.select-dark:focus {
+  border-color: #F7A8BD;
+}
+.select-dark option {
+  color: #061A33;
+}
