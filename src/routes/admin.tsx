@@ -101,6 +101,8 @@ function AdminPanel() {
         </div>
       )}
 
+      <AreaAtendidaAdmin />
+
       <section className="space-y-3">
         <h2 className="font-display text-lg text-white">Cadastradas ({rows.length})</h2>
         {rows.length === 0 && (
