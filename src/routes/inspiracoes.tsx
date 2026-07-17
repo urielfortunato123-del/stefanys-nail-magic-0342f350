@@ -233,15 +233,15 @@ function Inspiracoes() {
       </div>
 
       <div className="space-y-3">
-        <div className="flex items-center justify-center gap-3">
-          {(["Mãos", "Pés"] as const).map((b) => {
+        <div className="flex flex-wrap items-center justify-center gap-2">
+          {SHAPE_FILTERS.map((b) => {
             const active = bodyFilter === b;
             return (
               <button
                 key={b}
                 onClick={() => setBodyFilter(b)}
                 aria-pressed={active}
-                className={`min-w-[120px] rounded-full px-6 py-2 text-sm font-semibold transition-all ${
+                className={`rounded-full px-4 py-1.5 text-xs font-semibold transition-all ${
                   active
                     ? "bg-[#F7A8BD] text-[#061A33] shadow-sm"
                     : "border border-[#F7A8BD]/40 bg-white/10 text-white/90 hover:bg-white/15"
