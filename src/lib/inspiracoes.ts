@@ -4,6 +4,7 @@ import { compressImage } from "@/lib/upload-reference";
 
 export type InspiracaoTipo = "Mãos" | "Pés";
 export const FORMATOS = [
+  "Almond",
   "Bailarina",
   "Mandorla",
   "Oval",
