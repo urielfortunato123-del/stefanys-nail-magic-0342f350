@@ -1,5 +1,5 @@
 /* Stefany Nails — Service Worker (app-shell, network-first HTML) */
-const VERSION = "v7-almond-filter";
+const VERSION = "v8-almond-source-fix";
 const RUNTIME = `stefany-runtime-${VERSION}`;
 const PRECACHE = `stefany-precache-${VERSION}`;
 
@@ -40,6 +40,12 @@ self.addEventListener("fetch", (event) => {
   if (req.method !== "GET") return;
   const url = new URL(req.url);
   if (url.origin !== self.location.origin) return;
+
+  // Catálogo/dados: sempre rede, para não manter classificações antigas no PWA.
+  if (url.pathname.includes("/rest/v1/inspiracoes") || url.pathname.includes("/inspiracoes")) {
+    event.respondWith(fetch(req));
+    return;
+  }
 
   // HTML: network-first, fallback to cached "/"
   if (req.mode === "navigate" || req.headers.get("accept")?.includes("text/html")) {
