@@ -107,6 +107,12 @@ const SHAPE_ORDER: Record<string, number> = {
   Stiletto: 5,
 };
 
+function getExistingOrder(items: GalleryItem[]) {
+  const order = new Map<string, number>();
+  items.forEach((item, index) => order.set(item.id, index));
+  return order;
+}
+
 function Inspiracoes() {
   const [bodyFilter, setBodyFilter] = useState<ShapeFilter>("Todas");
   const [selected, setSelected] = useState<GalleryItem | null>(null);
@@ -171,8 +177,11 @@ function Inspiracoes() {
     const feet = gallery.filter((g) => g.bodyPart === "feet");
     if (bodyFilter === "Pés") return feet;
     if (bodyFilter === "Todas") {
+      const existingOrder = getExistingOrder(hands);
       return [...hands].sort(
-        (a, b) => (SHAPE_ORDER[a.shape] ?? 99) - (SHAPE_ORDER[b.shape] ?? 99),
+        (a, b) =>
+          (SHAPE_ORDER[a.shape] ?? 99) - (SHAPE_ORDER[b.shape] ?? 99) ||
+          (existingOrder.get(a.id) ?? 0) - (existingOrder.get(b.id) ?? 0),
       );
     }
     return hands.filter((g) => g.shape === bodyFilter);
