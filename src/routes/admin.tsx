@@ -379,3 +379,111 @@ function AdminRow({ row, thumb, onChange }: { row: InspiracaoRow; thumb?: string
     </li>
   );
 }
+
+function AreaAtendidaAdmin() {
+  const [cfg, setCfg] = useState<AreaAtendidaConfig>(DEFAULT_AREA_CONFIG);
+  const [saved, setSaved] = useState(false);
+
+  useEffect(() => {
+    setCfg(loadAreaConfig());
+  }, []);
+
+  function onSave(e: React.FormEvent) {
+    e.preventDefault();
+    saveAreaConfig(cfg);
+    setSaved(true);
+    setTimeout(() => setSaved(false), 2500);
+  }
+
+  return (
+    <form onSubmit={onSave} className="space-y-3 rounded-3xl border border-white/10 bg-white/5 p-4">
+      <div className="flex items-center gap-2">
+        <MapPin className="h-4 w-4 text-[color:var(--pink)]" />
+        <h2 className="font-display text-lg text-white">Configuração da área atendida</h2>
+      </div>
+      <p className="text-xs text-white/60">
+        Ponto aproximado da região-base. Não exibe endereço residencial.
+      </p>
+      <div className="grid grid-cols-2 gap-3">
+        <label className="col-span-2 block">
+          <span className="text-[11px] uppercase tracking-widest text-white/60">Cidade-base</span>
+          <input
+            value={cfg.cidade}
+            onChange={(e) => setCfg({ ...cfg, cidade: e.target.value })}
+            className="select-dark"
+          />
+        </label>
+        <label className="block">
+          <span className="text-[11px] uppercase tracking-widest text-white/60">Latitude</span>
+          <input
+            type="number"
+            step="0.0001"
+            value={cfg.lat}
+            onChange={(e) => setCfg({ ...cfg, lat: parseFloat(e.target.value) })}
+            className="select-dark"
+          />
+        </label>
+        <label className="block">
+          <span className="text-[11px] uppercase tracking-widest text-white/60">Longitude</span>
+          <input
+            type="number"
+            step="0.0001"
+            value={cfg.lng}
+            onChange={(e) => setCfg({ ...cfg, lng: parseFloat(e.target.value) })}
+            className="select-dark"
+          />
+        </label>
+        <label className="block">
+          <span className="text-[11px] uppercase tracking-widest text-white/60">Raio (km)</span>
+          <input
+            type="number"
+            step="1"
+            min="1"
+            value={cfg.raioKm}
+            onChange={(e) => setCfg({ ...cfg, raioKm: parseFloat(e.target.value) })}
+            className="select-dark"
+          />
+        </label>
+        <label className="block">
+          <span className="text-[11px] uppercase tracking-widest text-white/60">Taxa/km (R$)</span>
+          <input
+            type="number"
+            step="0.5"
+            value={cfg.taxaPorKm ?? ""}
+            onChange={(e) =>
+              setCfg({
+                ...cfg,
+                taxaPorKm: e.target.value ? parseFloat(e.target.value) : undefined,
+              })
+            }
+            className="select-dark"
+          />
+        </label>
+        <label className="col-span-2 block">
+          <span className="text-[11px] uppercase tracking-widest text-white/60">Observação</span>
+          <textarea
+            rows={2}
+            value={cfg.observacao ?? ""}
+            onChange={(e) => setCfg({ ...cfg, observacao: e.target.value })}
+            className="select-dark"
+          />
+        </label>
+        <label className="col-span-2 flex items-center gap-2 text-sm text-white/80">
+          <input
+            type="checkbox"
+            checked={cfg.circuloAtivo}
+            onChange={(e) => setCfg({ ...cfg, circuloAtivo: e.target.checked })}
+          />
+          Exibir círculo da área no mapa
+        </label>
+      </div>
+      <button
+        type="submit"
+        className="w-full rounded-full bg-[color:var(--pink)] py-2.5 text-sm font-semibold text-[color:var(--navy)] pink-glow"
+      >
+        Salvar configuração
+      </button>
+      {saved && <p className="text-center text-xs text-emerald-300">Configuração salva.</p>}
+    </form>
+  );
+}
