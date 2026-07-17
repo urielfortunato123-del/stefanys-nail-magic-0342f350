@@ -88,8 +88,7 @@ const handInspirations: Array<{ url: string; shape: InspirationShape }> = [
   { url: "/inspiracoes/maos/inspiracao-maos-09.jpg", shape: "Bailarina" },
   { url: "/inspiracoes/maos/inspiracao-maos-12.jpg", shape: "Bailarina" },
   { url: "/inspiracoes/maos/inspiracao-maos-14.jpg", shape: "Mandorla" },
-  { url: "/inspiracoes/maos/inspiracao-maos-17.jpg", shape: "Mandorla" },
-  { url: "/inspiracoes/maos/inspiracao-maos-02.jpg", shape: "Mandorla" },
+  { url: "/inspiracoes/maos/inspiracao-maos-13.jpg", shape: "Mandorla" },
   { url: "/inspiracoes/maos/inspiracao-maos-07.jpg", shape: "Oval" },
   { url: "/inspiracoes/maos/inspiracao-maos-11.jpg", shape: "Oval" },
   { url: "/inspiracoes/maos/inspiracao-maos-03.jpg", shape: "Quadrada" },
@@ -98,9 +97,10 @@ const handInspirations: Array<{ url: string; shape: InspirationShape }> = [
   { url: "/inspiracoes/maos/inspiracao-maos-06.jpg", shape: "Stiletto" },
   { url: "/inspiracoes/maos/inspiracao-maos-08.jpg", shape: "Stiletto" },
   { url: "/inspiracoes/maos/inspiracao-maos-10.jpg", shape: "Stiletto" },
-  { url: "/inspiracoes/maos/inspiracao-maos-13.jpg", shape: "Stiletto" },
   { url: "/inspiracoes/maos/inspiracao-maos-15.jpg", shape: "Stiletto" },
   { url: "/inspiracoes/maos/inspiracao-maos-16.jpg", shape: "Stiletto" },
+  { url: "/inspiracoes/maos/inspiracao-maos-17.jpg", shape: "Stiletto" },
+  { url: "/inspiracoes/maos/inspiracao-maos-02.jpg", shape: "Stiletto" },
 ];
 
 export const gallery: GalleryItem[] = [
