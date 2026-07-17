@@ -166,13 +166,17 @@ function Inspiracoes() {
     }
   }, [wantModel]);
 
-  const filteredAll = useMemo(
-    () =>
-      gallery.filter((g) =>
-        bodyFilter === "Pés" ? g.bodyPart === "feet" : g.bodyPart !== "feet",
-      ),
-    [gallery, bodyFilter],
-  );
+  const filteredAll = useMemo(() => {
+    const hands = gallery.filter((g) => g.bodyPart !== "feet");
+    const feet = gallery.filter((g) => g.bodyPart === "feet");
+    if (bodyFilter === "Pés") return feet;
+    if (bodyFilter === "Todas") {
+      return [...hands].sort(
+        (a, b) => (SHAPE_ORDER[a.shape] ?? 99) - (SHAPE_ORDER[b.shape] ?? 99),
+      );
+    }
+    return hands.filter((g) => g.shape === bodyFilter);
+  }, [gallery, bodyFilter]);
   const filtered = useMemo(
     () => filteredAll.slice(0, visible[bodyFilter]),
     [filteredAll, visible, bodyFilter],
