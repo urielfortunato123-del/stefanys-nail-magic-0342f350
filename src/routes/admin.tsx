@@ -12,7 +12,13 @@ import {
   type InspiracaoRow,
   type InspiracaoTipo,
 } from "@/lib/inspiracoes";
-import { Loader2, LogOut, Upload, Eye, EyeOff as OffIcon, Trash2 } from "lucide-react";
+import {
+  DEFAULT_AREA_CONFIG,
+  loadAreaConfig,
+  saveAreaConfig,
+  type AreaAtendidaConfig,
+} from "@/lib/area-atendida-config";
+import { Loader2, LogOut, Upload, Eye, EyeOff as OffIcon, Trash2, MapPin } from "lucide-react";
 
 export const Route = createFileRoute("/admin")({
   head: () => ({ meta: [{ title: "Painel administrativo" }, { name: "robots", content: "noindex" }] }),
