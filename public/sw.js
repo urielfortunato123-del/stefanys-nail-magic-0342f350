@@ -1,5 +1,5 @@
 /* Stefany Nails — Service Worker (app-shell, network-first HTML) */
-const VERSION = "v4";
+const VERSION = "v5-navy-silver";
 const RUNTIME = `stefany-runtime-${VERSION}`;
 const PRECACHE = `stefany-precache-${VERSION}`;
 
