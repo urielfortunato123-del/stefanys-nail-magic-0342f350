@@ -68,7 +68,7 @@ export async function resolveImageUrl(
   return row.imagem_url;
 }
 
-const FORMATO_ORDER = ["Bailarina", "Mandorla", "Oval", "Quadrada", "Stiletto", "Não se aplica"];
+const FORMATO_ORDER = ["Almond", "Bailarina", "Mandorla", "Oval", "Quadrada", "Stiletto", "Não se aplica"];
 
 function formatoRank(f: string): number {
   const i = FORMATO_ORDER.indexOf(f);
