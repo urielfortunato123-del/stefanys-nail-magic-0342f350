@@ -87,8 +87,28 @@ function NailImage({
 
 const PAGE_SIZE = 6;
 
+const SHAPE_FILTERS = [
+  "Todas",
+  "Almond",
+  "Bailarina",
+  "Mandorla",
+  "Oval",
+  "Quadrada",
+  "Stiletto",
+  "Pés",
+] as const;
+type ShapeFilter = (typeof SHAPE_FILTERS)[number];
+const SHAPE_ORDER: Record<string, number> = {
+  Almond: 0,
+  Bailarina: 1,
+  Mandorla: 2,
+  Oval: 3,
+  Quadrada: 4,
+  Stiletto: 5,
+};
+
 function Inspiracoes() {
-  const [bodyFilter, setBodyFilter] = useState<"Mãos" | "Pés">("Mãos");
+  const [bodyFilter, setBodyFilter] = useState<ShapeFilter>("Todas");
   const [selected, setSelected] = useState<GalleryItem | null>(null);
   const [fullscreen, setFullscreen] = useState<GalleryItem | null>(null);
   const [wantModel, setWantModel] = useState<GalleryItem | null>(null);
@@ -100,7 +120,16 @@ function Inspiracoes() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [reloadKey, setReloadKey] = useState(0);
-  const [visible, setVisible] = useState<Record<"Mãos" | "Pés", number>>({ Mãos: PAGE_SIZE, Pés: PAGE_SIZE });
+  const [visible, setVisible] = useState<Record<ShapeFilter, number>>({
+    Todas: PAGE_SIZE,
+    Almond: PAGE_SIZE,
+    Bailarina: PAGE_SIZE,
+    Mandorla: PAGE_SIZE,
+    Oval: PAGE_SIZE,
+    Quadrada: PAGE_SIZE,
+    Stiletto: PAGE_SIZE,
+    Pés: PAGE_SIZE,
+  });
   const { favs, toggle } = useFavorites();
   const { data: booking, update } = useBooking();
   const navigate = useNavigate();
