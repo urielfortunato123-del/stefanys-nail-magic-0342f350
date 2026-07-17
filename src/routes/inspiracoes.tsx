@@ -87,8 +87,28 @@ function NailImage({
 
 const PAGE_SIZE = 6;
 
+const SHAPE_FILTERS = [
+  "Todas",
+  "Almond",
+  "Bailarina",
+  "Mandorla",
+  "Oval",
+  "Quadrada",
+  "Stiletto",
+  "Pés",
+] as const;
+type ShapeFilter = (typeof SHAPE_FILTERS)[number];
+const SHAPE_ORDER: Record<string, number> = {
+  Almond: 0,
+  Bailarina: 1,
+  Mandorla: 2,
+  Oval: 3,
+  Quadrada: 4,
+  Stiletto: 5,
+};
+
 function Inspiracoes() {
-  const [bodyFilter, setBodyFilter] = useState<"Mãos" | "Pés">("Mãos");
+  const [bodyFilter, setBodyFilter] = useState<ShapeFilter>("Todas");
   const [selected, setSelected] = useState<GalleryItem | null>(null);
   const [fullscreen, setFullscreen] = useState<GalleryItem | null>(null);
   const [wantModel, setWantModel] = useState<GalleryItem | null>(null);
@@ -100,7 +120,16 @@ function Inspiracoes() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [reloadKey, setReloadKey] = useState(0);
-  const [visible, setVisible] = useState<Record<"Mãos" | "Pés", number>>({ Mãos: PAGE_SIZE, Pés: PAGE_SIZE });
+  const [visible, setVisible] = useState<Record<ShapeFilter, number>>({
+    Todas: PAGE_SIZE,
+    Almond: PAGE_SIZE,
+    Bailarina: PAGE_SIZE,
+    Mandorla: PAGE_SIZE,
+    Oval: PAGE_SIZE,
+    Quadrada: PAGE_SIZE,
+    Stiletto: PAGE_SIZE,
+    Pés: PAGE_SIZE,
+  });
   const { favs, toggle } = useFavorites();
   const { data: booking, update } = useBooking();
   const navigate = useNavigate();
@@ -137,13 +166,17 @@ function Inspiracoes() {
     }
   }, [wantModel]);
 
-  const filteredAll = useMemo(
-    () =>
-      gallery.filter((g) =>
-        bodyFilter === "Pés" ? g.bodyPart === "feet" : g.bodyPart !== "feet",
-      ),
-    [gallery, bodyFilter],
-  );
+  const filteredAll = useMemo(() => {
+    const hands = gallery.filter((g) => g.bodyPart !== "feet");
+    const feet = gallery.filter((g) => g.bodyPart === "feet");
+    if (bodyFilter === "Pés") return feet;
+    if (bodyFilter === "Todas") {
+      return [...hands].sort(
+        (a, b) => (SHAPE_ORDER[a.shape] ?? 99) - (SHAPE_ORDER[b.shape] ?? 99),
+      );
+    }
+    return hands.filter((g) => g.shape === bodyFilter);
+  }, [gallery, bodyFilter]);
   const filtered = useMemo(
     () => filteredAll.slice(0, visible[bodyFilter]),
     [filteredAll, visible, bodyFilter],
@@ -200,15 +233,15 @@ function Inspiracoes() {
       </div>
 
       <div className="space-y-3">
-        <div className="flex items-center justify-center gap-3">
-          {(["Mãos", "Pés"] as const).map((b) => {
+        <div className="flex flex-wrap items-center justify-center gap-2">
+          {SHAPE_FILTERS.map((b) => {
             const active = bodyFilter === b;
             return (
               <button
                 key={b}
                 onClick={() => setBodyFilter(b)}
                 aria-pressed={active}
-                className={`min-w-[120px] rounded-full px-6 py-2 text-sm font-semibold transition-all ${
+                className={`rounded-full px-4 py-1.5 text-xs font-semibold transition-all ${
                   active
                     ? "bg-[#F7A8BD] text-[#061A33] shadow-sm"
                     : "border border-[#F7A8BD]/40 bg-white/10 text-white/90 hover:bg-white/15"

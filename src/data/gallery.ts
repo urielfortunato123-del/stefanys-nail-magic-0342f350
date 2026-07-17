@@ -72,6 +72,7 @@ export const categoryOrder: Record<string, number> = {
 
 // Formatos disponíveis nos filtros de inspiração (mãos) — ordem alfabética.
 export const inspirationShapes = [
+  "Almond",
   "Bailarina",
   "Mandorla",
   "Oval",
@@ -84,23 +85,23 @@ export type InspirationShape = (typeof inspirationShapes)[number];
 // Imagens ficam em public/inspiracoes/maos/ como caminhos relativos estáveis.
 // Ordenadas alfabeticamente pelo formato para facilitar a navegação.
 const handInspirations: Array<{ url: string; shape: InspirationShape }> = [
+  { url: "/inspiracoes/maos/inspiracao-maos-01.jpg", shape: "Almond" },
+  { url: "/inspiracoes/maos/inspiracao-maos-02.jpg", shape: "Almond" },
+  { url: "/inspiracoes/maos/inspiracao-maos-05.jpg", shape: "Almond" },
+  { url: "/inspiracoes/maos/inspiracao-maos-06.jpg", shape: "Almond" },
+  { url: "/inspiracoes/maos/inspiracao-maos-08.jpg", shape: "Almond" },
+  { url: "/inspiracoes/maos/inspiracao-maos-10.jpg", shape: "Almond" },
   { url: "/inspiracoes/maos/inspiracao-maos-04.jpg", shape: "Bailarina" },
   { url: "/inspiracoes/maos/inspiracao-maos-09.jpg", shape: "Bailarina" },
   { url: "/inspiracoes/maos/inspiracao-maos-12.jpg", shape: "Bailarina" },
-  { url: "/inspiracoes/maos/inspiracao-maos-14.jpg", shape: "Mandorla" },
   { url: "/inspiracoes/maos/inspiracao-maos-13.jpg", shape: "Mandorla" },
+  { url: "/inspiracoes/maos/inspiracao-maos-14.jpg", shape: "Mandorla" },
   { url: "/inspiracoes/maos/inspiracao-maos-07.jpg", shape: "Oval" },
   { url: "/inspiracoes/maos/inspiracao-maos-11.jpg", shape: "Oval" },
   { url: "/inspiracoes/maos/inspiracao-maos-03.jpg", shape: "Quadrada" },
-  { url: "/inspiracoes/maos/inspiracao-maos-01.jpg", shape: "Stiletto" },
-  { url: "/inspiracoes/maos/inspiracao-maos-05.jpg", shape: "Stiletto" },
-  { url: "/inspiracoes/maos/inspiracao-maos-06.jpg", shape: "Stiletto" },
-  { url: "/inspiracoes/maos/inspiracao-maos-08.jpg", shape: "Stiletto" },
-  { url: "/inspiracoes/maos/inspiracao-maos-10.jpg", shape: "Stiletto" },
   { url: "/inspiracoes/maos/inspiracao-maos-15.jpg", shape: "Stiletto" },
   { url: "/inspiracoes/maos/inspiracao-maos-16.jpg", shape: "Stiletto" },
   { url: "/inspiracoes/maos/inspiracao-maos-17.jpg", shape: "Stiletto" },
-  { url: "/inspiracoes/maos/inspiracao-maos-02.jpg", shape: "Stiletto" },
 ];
 
 export const gallery: GalleryItem[] = [
