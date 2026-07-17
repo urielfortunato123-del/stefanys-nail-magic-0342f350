@@ -31,6 +31,14 @@ const quickLinks: { to: string; label: string; icon: typeof HomeIcon }[] = [
 ];
 type InspirationFilter = "Todas" | (typeof inspirationShapes)[number] | "Pés";
 const inspirationFilters: InspirationFilter[] = ["Todas", ...inspirationShapes, "Pés"];
+const inspirationShapeOrder: Record<string, number> = {
+  Almond: 0,
+  Bailarina: 1,
+  Mandorla: 2,
+  Oval: 3,
+  Quadrada: 4,
+  Stiletto: 5,
+};
 
 function openInspirationOnWhatsApp(g: GalleryItem) {
   const categoria = g.bodyPart === "feet" ? "Pés" : "Mãos";
@@ -52,7 +60,17 @@ function Home() {
   const filteredWorks = useMemo(() => {
     const isFeet = (g: GalleryItem) => g.bodyPart === "feet";
     if (filter === "Pés") return gallery.filter(isFeet);
-    if (filter === "Todas") return gallery.filter((g) => !isFeet(g));
+    if (filter === "Todas") {
+      return gallery
+        .map((g, index) => ({ g, index }))
+        .filter(({ g }) => !isFeet(g))
+        .sort(
+          (a, b) =>
+            (inspirationShapeOrder[a.g.shape] ?? 99) - (inspirationShapeOrder[b.g.shape] ?? 99) ||
+            a.index - b.index,
+        )
+        .map(({ g }) => g);
+    }
     return gallery.filter((g) => !isFeet(g) && g.shape === filter);
   }, [filter]);
 
