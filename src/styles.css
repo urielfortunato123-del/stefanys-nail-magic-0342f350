@@ -56,39 +56,40 @@
 :root {
   --radius: 1rem;
 
-  /* Navy / petrol / silver palette */
+  /* Navy / petrol palette */
   --navy-950: #041321;
   --navy-900: #071B33;
   --navy-800: #0B2945;
   --petrol-700: #0D4C6B;
+  --petrol-600: #174E6A;
   --blue-600: #14648A;
   --blue-500: #2385B5;
 
-  --silver-500: #8F9BA5;
-  --silver-400: #AEBAC4;
-  --silver-300: #C6D0D8;
-  --silver-200: #E2E8ED;
-  --silver-100: #F0F3F5;
+  /* Rosé gold palette (replaces silver) */
+  --rose-gold-dark: #A85F55;
+  --rose-gold: #D99682;
+  --rose-gold-light: #F0B19D;
+  --rose-champagne: #E8A28D;
+  --rose-copper: #C77B69;
+  --rose-highlight: #FFD2C3;
 
-  --text-primary: #E2E8ED;
-  --text-secondary: #B7C2CA;
-  --text-muted: #8193A0;
+  --text-primary: #F5DDD5;
+  --text-secondary: #D8B9AE;
+  --text-muted: #B08E85;
 
   --glass-dark: rgba(7, 27, 51, 0.84);
   --glass-medium: rgba(11, 41, 69, 0.78);
-  --glass-light: rgba(35, 133, 181, 0.10);
+  --glass-light: rgba(217, 150, 130, 0.10);
 
-  --silver-border: rgba(226, 232, 237, 0.58);
-  --silver-border-soft: rgba(198, 208, 216, 0.28);
+  --rose-border: rgba(217, 150, 130, 0.52);
+  --rose-border-soft: rgba(240, 177, 157, 0.30);
 
-  /* Legacy token aliases: map existing components to the new palette
-     so bg-[color:var(--pink)], text-[color:var(--navy)], --gold, etc.
-     re-theme automatically to navy/silver. */
+  /* Legacy token aliases mapped to rosé gold + navy */
   --navy: var(--navy-950);
   --navy-deep: var(--navy-900);
-  --pink: var(--silver-300);          /* accent -> silver */
-  --pink-soft: var(--silver-200);
-  --gold: var(--silver-200);
+  --pink: var(--rose-gold);
+  --pink-soft: var(--rose-gold-light);
+  --gold: var(--rose-highlight);
 
   /* shadcn semantic tokens */
   --background: var(--navy-950);
@@ -97,32 +98,32 @@
   --card-foreground: var(--text-primary);
   --popover: var(--navy-800);
   --popover-foreground: var(--text-primary);
-  --primary: var(--blue-500);
-  --primary-foreground: var(--text-primary);
-  --secondary: var(--silver-300);
+  --primary: var(--rose-gold);
+  --primary-foreground: var(--navy-900);
+  --secondary: var(--rose-gold-light);
   --secondary-foreground: var(--navy-950);
   --muted: var(--navy-800);
   --muted-foreground: var(--text-secondary);
-  --accent: var(--silver-200);
+  --accent: var(--rose-highlight);
   --accent-foreground: var(--navy-950);
   --destructive: oklch(0.577 0.245 27.325);
   --destructive-foreground: #ffffff;
-  --border: rgba(226, 232, 237, 0.20);
-  --input: rgba(255, 255, 255, 0.10);
-  --ring: var(--blue-500);
-  --chart-1: var(--blue-500);
-  --chart-2: var(--silver-300);
+  --border: rgba(217, 150, 130, 0.32);
+  --input: rgba(217, 150, 130, 0.14);
+  --ring: var(--rose-gold);
+  --chart-1: var(--rose-gold);
+  --chart-2: var(--rose-copper);
   --chart-3: var(--petrol-700);
   --chart-4: var(--navy-800);
-  --chart-5: var(--silver-100);
+  --chart-5: var(--rose-highlight);
   --sidebar: var(--navy-950);
   --sidebar-foreground: var(--text-primary);
-  --sidebar-primary: var(--blue-500);
-  --sidebar-primary-foreground: var(--text-primary);
+  --sidebar-primary: var(--rose-gold);
+  --sidebar-primary-foreground: var(--navy-950);
   --sidebar-accent: var(--navy-800);
   --sidebar-accent-foreground: var(--text-primary);
-  --sidebar-border: rgba(226, 232, 237, 0.15);
-  --sidebar-ring: var(--blue-500);
+  --sidebar-border: rgba(217, 150, 130, 0.22);
+  --sidebar-ring: var(--rose-gold);
 }
 
 .dark {
@@ -163,28 +164,26 @@
     color: var(--text-primary);
   }
 
-  /* Re-theme legacy white/navy utilities that were previously flipped
-     for a light background. Now everything sits on deep navy. */
+  /* Re-theme legacy white utilities onto navy + rosé gold */
   .text-white { color: var(--text-primary) !important; }
-  .text-white\/90 { color: rgba(226, 232, 237, 0.92) !important; }
-  .text-white\/80 { color: rgba(226, 232, 237, 0.85) !important; }
-  .text-white\/70 { color: rgba(198, 208, 216, 0.78) !important; }
-  .text-white\/60 { color: rgba(183, 194, 202, 0.72) !important; }
-  .text-white\/50 { color: rgba(143, 155, 165, 0.72) !important; }
-  .text-white\/40 { color: rgba(129, 147, 160, 0.72) !important; }
+  .text-white\/90 { color: rgba(245, 221, 213, 0.92) !important; }
+  .text-white\/80 { color: rgba(245, 221, 213, 0.85) !important; }
+  .text-white\/70 { color: rgba(216, 185, 174, 0.82) !important; }
+  .text-white\/60 { color: rgba(216, 185, 174, 0.70) !important; }
+  .text-white\/50 { color: rgba(176, 142, 133, 0.72) !important; }
+  .text-white\/40 { color: rgba(176, 142, 133, 0.58) !important; }
   .text-foreground { color: var(--text-primary) !important; }
 
-  /* Buttons filled with the accent (bg-[color:var(--pink)]) get dark navy
-     text so silver reads as polished metal. */
+  /* Accent-filled buttons get deep navy text so rosé gold reads polished. */
   .bg-\[color\:var\(--pink\)\] .text-white,
-  [class*="bg-[color:var(--pink)]"] .text-white { color: var(--navy-950) !important; }
+  [class*="bg-[color:var(--pink)]"] .text-white { color: var(--navy-900) !important; }
 
-  /* Soften bright white borders into silver on navy. */
-  .border-white\/5 { border-color: rgba(226, 232, 237, 0.12) !important; }
-  .border-white\/10 { border-color: rgba(226, 232, 237, 0.18) !important; }
-  .border-white\/20 { border-color: rgba(226, 232, 237, 0.28) !important; }
+  /* Rosé gold borders in place of white borders */
+  .border-white\/5 { border-color: rgba(217, 150, 130, 0.18) !important; }
+  .border-white\/10 { border-color: rgba(217, 150, 130, 0.28) !important; }
+  .border-white\/20 { border-color: rgba(217, 150, 130, 0.42) !important; }
 
-  /* Previously-white glass surfaces become dark navy glass. */
+  /* Previously-white glass surfaces become dark navy glass */
   .bg-white\/60,
   .bg-white\/70,
   .bg-white\/80,
@@ -195,27 +194,34 @@
   }
 
   .bg-\[\#08213D\] { background-color: var(--glass-medium) !important; }
+
+  /* Solid pink accent surfaces render as rosé gold gradient */
+  [class*="bg-[color:var(--pink)]"] {
+    background-image: linear-gradient(135deg, #A85F55 0%, #D99682 24%, #FFD2C3 48%, #E8A28D 68%, #C77B69 100%) !important;
+    color: var(--navy-900) !important;
+    border-color: var(--rose-highlight);
+  }
 }
 
 @utility glass-card {
-  background: linear-gradient(145deg, rgba(13, 45, 73, 0.90), rgba(4, 19, 33, 0.82));
-  border: 1px solid var(--silver-border);
+  background: linear-gradient(145deg, rgba(13, 45, 73, 0.90), rgba(4, 19, 33, 0.84));
+  border: 1px solid var(--rose-border);
   box-shadow:
     0 18px 45px rgba(0, 0, 0, 0.32),
-    inset 0 1px 0 rgba(255, 255, 255, 0.16),
-    0 0 20px rgba(35, 133, 181, 0.08);
+    inset 0 1px 0 rgba(255, 210, 195, 0.16),
+    0 0 20px rgba(217, 150, 130, 0.10);
   backdrop-filter: blur(18px) saturate(125%);
   border-radius: 28px;
 }
 
 @utility pink-glow {
   box-shadow:
-    0 10px 30px -8px rgba(35, 133, 181, 0.45),
-    0 0 14px rgba(226, 232, 237, 0.18);
+    0 10px 30px -8px rgba(217, 150, 130, 0.55),
+    0 0 14px rgba(255, 210, 195, 0.28);
 }
 
 @utility silver-text {
-  background: linear-gradient(90deg, #8F9BA5, #F0F3F5, #AEBAC4);
+  background: linear-gradient(90deg, #C77B69, #FFD2C3, #D99682);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -228,7 +234,7 @@
 }
 
 @utility shimmer-text {
-  background: linear-gradient(90deg, #7D8993 0%, #E2E8ED 30%, #F0F3F5 50%, #AEBAC4 70%, #7D8993 100%);
+  background: linear-gradient(90deg, #A85F55 0%, #D99682 25%, #FFD2C3 50%, #E8A28D 75%, #C77B69 100%);
   background-size: 200% 100%;
   -webkit-background-clip: text;
   background-clip: text;
@@ -270,14 +276,14 @@ textarea::placeholder {
   display: block;
   flex-shrink: 0;
   border-radius: 9999px;
-  border: 1px solid var(--silver-border);
-  box-shadow: 0 0 12px rgba(35, 133, 181, 0.25);
+  border: 1px solid var(--rose-border);
+  box-shadow: 0 0 12px rgba(217, 150, 130, 0.35);
 }
 
 .select-dark {
   width: 100%;
   border-radius: 1rem;
-  border: 1px solid var(--silver-border-soft);
+  border: 1px solid var(--rose-border-soft);
   background: rgba(4, 19, 33, 0.78);
   padding: 0.6rem 0.75rem;
   color: var(--text-primary);
@@ -285,10 +291,10 @@ textarea::placeholder {
   outline: none;
 }
 .select-dark:focus {
-  border-color: var(--silver-200);
-  box-shadow: 0 0 0 3px rgba(35, 133, 181, 0.25);
+  border-color: var(--rose-highlight);
+  box-shadow: 0 0 0 3px rgba(217, 150, 130, 0.25);
 }
 .select-dark option {
   color: var(--navy-950);
-  background: var(--silver-100);
+  background: var(--rose-highlight);
 }
