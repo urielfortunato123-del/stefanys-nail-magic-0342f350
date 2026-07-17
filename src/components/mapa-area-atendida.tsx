@@ -201,7 +201,8 @@ export default function MapaAreaAtendida({
                 <Popup>
                   Você está aqui
                   <br />
-                  Distância aprox.: {haversineKm(center[0] === clientPos.lat ? clientPos : { lat: center[0], lng: center[1] }, clientPos).toFixed(1)} km
+                  Distância aprox.:{" "}
+                  {haversineKm({ lat: center[0], lng: center[1] }, clientPos).toFixed(1)} km
                 </Popup>
               </Marker>
             </LayersControl.Overlay>
