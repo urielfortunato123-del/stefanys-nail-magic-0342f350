@@ -80,10 +80,11 @@ export function toGalleryItem(row: InspiracaoRow, imageUrl: string): GalleryItem
   const shape = (FORMATOS.includes(row.formato as (typeof FORMATOS)[number]) && row.formato !== "Não se aplica"
     ? row.formato
     : "Quadrada") as NailShape;
+  const category = isFeet ? "Pés" : row.formato;
   return {
     id: row.id,
     title: row.titulo || "Inspiração",
-    category: isFeet ? "Pés" : "Mãos",
+    category,
     imageUrl,
     colors: row.cor && row.cor !== "Não informar" ? [row.cor] : [],
     mainColor: row.cor && row.cor !== "Não informar" ? row.cor : "",
@@ -126,11 +127,11 @@ export function sortInspiracoes(rows: InspiracaoRow[]): InspiracaoRow[] {
     // 2) Formato alfabético (via ordem definida)
     const fr = formatoRank(a.formato) - formatoRank(b.formato);
     if (fr !== 0) return fr;
-    // 3) Estilo alfabético
-    const er = a.estilo.localeCompare(b.estilo, "pt-BR");
-    if (er !== 0) return er;
-    // 4) Mais recente primeiro
-    return b.criado_em.localeCompare(a.criado_em);
+    // 3) Dentro de cada formato, preservar a ordem cadastrada no catálogo
+    const or = a.ordem - b.ordem;
+    if (or !== 0) return or;
+    // 4) Desempate estável por imagem
+    return a.imagem_url.localeCompare(b.imagem_url, "pt-BR");
   });
 }
 
